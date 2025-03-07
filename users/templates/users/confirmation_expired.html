@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitSim | Реєстрація</title>
+
+  <link rel="stylesheet" href="{% static 'users/styles/confirm_email.css' %}">
+  <link rel="stylesheet" href="{% static 'users/styles/animated_bg.css' %}">
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="banner">
+    <div class="content">
+      <section class="container forms">
+        <div class="form login">
+          <div class="form-content">
+            <img class="logo" src="https://i.ibb.co/S6YcssD/4-1.png" alt="Logo">
+            <header>Термін дії підтвердження електронної пошти минув</header>
+              <br></br>
+              <p class="info">Будь ласка поверністься назад і спробуйте ще раз</p>
+              <div class="field button-field">
+                <button><a style="color:white; padding:16px 100px;" href="{% url 'register' %}" id="submitButton">Повернутися назад</a></button>
+              </div>
+          </div>
+        </div>
+      </section>
+      <p class="rights">© 2024-2025 BitSim. All rights reserved. Copyright by Nazar Tsikhotsʹkyy.</p>
+    </div>
+  </div>
+</body>
+</html>

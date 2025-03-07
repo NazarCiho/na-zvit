@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitSim | Реєстрація</title>
+
+  <link rel="stylesheet" href="{% static 'users/styles/confirm_email.css' %}">
+  <link rel="stylesheet" href="{% static 'users/styles/animated_bg.css' %}">
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="banner">
+    <div class="content">
+      <div class="error-container">
+        {% if error_message %}
+          <p class="error-message">
+            {{ error_message }}
+          </p>
+        {% endif %}
+      </div>
+      <section class="container forms">
+        <div class="form login">
+          <div class="form-content">
+            <img class="logo" src="https://i.ibb.co/S6YcssD/4-1.png" alt="Logo">
+            <header>Підтвердіть адресу електронної пошти</header>
+
+
+
+            <!-- Початок форми -->
+            <form method="post" action="" id="verificationForm">
+              {% csrf_token %}
+              <p class="info">6-значний код надіслано на адресу <strong style="color:#00a514">{{ email }}</strong>. Будь ласка, введіть його протягом наступних 10 хвилин.</p>
+              <p class="prev-text">Введіть код підтвердження</p>
+
+              <div class="field input-field">
+                <div class="verification-code">
+                  <!-- Поля з обмеженням на цифри -->
+                  <input type="text" name="code1" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                  <input type="text" name="code2" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                  <input type="text" name="code3" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                  <input type="text" name="code4" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                  <input type="text" name="code5" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                  <input type="text" name="code6" maxlength="1" class="code-input" inputmode="numeric" pattern="[0-9]*" required>
+                </div>
+              </div>
+
+              <div class="field button-field">
+                <button type="submit" id="submitButton">Підтвердити</button>
+              </div>
+              <br>
+              <div class="did-not-get-code">
+                <a href="#" id="openModal">Не отримали код?</a>
+              </div>
+            </form>
+
+            <!-- Кнопка для повторного надсилання коду -->
+            <form method="post" action="{% url 'resend_confirmation_code' %}">
+              {% csrf_token %}
+              <button type="submit" class="resendButton">Надіслати код ще раз</button>
+            </form>
+          </div>
+        </div>
+      </section>
+      <p class="rights">© 2024-2025 BitSim. All rights reserved. Copyright by Nazar Tsikhotsʹkyy.</p>
+    </div>
+  </div>
+
+  <!-- Модальне вікно -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <img class="email-img" src="https://cdn-icons-png.flaticon.com/512/9840/9840614.png" alt="">
+      <h2>Не отримали код підтвердження?</h2>
+      <div class="advices">
+        <p class="advice">1. Переконайтесь, що ви правильно ввели адресу електронної пошти.</p>
+        <p class="advice">2. Перевірте папку зі спамом. Іноді там опиняються навіть хороші листи.</p>
+        <p class="advice">3. Зачекайте кілька хвилин. Можлива затримка.</p>
+        <p class="advice">4. Створіть білий список адрес електронної пошти.</p>
+      </div>
+      <button id="closeModal">Зрозуміло</button>
+    </div>
+  </div>
+
+  <script>
+    const openModal = document.getElementById('openModal');
+    const closeModal = document.getElementById('closeModal');
+    const modal = document.getElementById('modal');
+    const inputs = document.querySelectorAll('.code-input');
+    const form = document.getElementById('verificationForm');
+    const submitButton = document.getElementById('submitButton');
+
+    openModal.addEventListener('click', (e) => {
+      e.preventDefault();
+      modal.classList.add('show');
+    });
+
+    closeModal.addEventListener('click', () => {
+      modal.classList.remove('show');
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('show');
+      }
+    });
+
+    // Логіка обмеження вводу лише цифр
+    inputs.forEach((input, index) => {
+  // Обробка введення
+  input.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/[^0-9]/g, ''); // Заборонити нечислові символи
+
+    if (e.target.value.length === 1 && index < inputs.length - 1) {
+      inputs[index + 1].focus(); // Перехід до наступного поля
+    }
+
+    // Перевірка, чи всі поля заповнені
+    if (Array.from(inputs).every((input) => input.value.length === 1)) {
+      form.submit(); // Автоматичне відправлення форми
+    }
+  });
+
+  // Обробка вставки (наприклад, з пошти)
+  input.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, ''); // Витягнути цифри
+    Array.from(pastedData).forEach((char, i) => {
+      if (inputs[i]) {
+        inputs[i].value = char;
+      }
+    });
+
+    // Автоматично відправити форму, якщо всі поля заповнені
+    if (pastedData.length === inputs.length) {
+      form.submit();
+    } else if (pastedData.length < inputs.length) {
+      inputs[pastedData.length].focus();
+    }
+  });
+
+  // Обробка клавіші Backspace
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace') {
+      if (e.target.value) {
+        e.target.value = ''; // Очистити поле
+      } else if (index > 0) {
+        inputs[index - 1].focus(); // Перейти до попереднього поля
+      }
+    }
+  });
+
+  // Фокус на поточне поле без додаткових маніпуляцій
+  input.addEventListener('click', () => {
+    input.select(); // Виділити текст у полі
+  });
+});
+// Ініціалізувати значення в localStorage, якщо воно ще не встановлено
+if (!localStorage.getItem('previousCode')) {
+  localStorage.setItem('previousCode', '');
+}
+
+let previousCode = localStorage.getItem('previousCode');
+
+// Функція для перевірки скопійованого тексту
+const checkClipboard = async () => {
+  try {
+    // Отримати текст із буфера обміну
+    const text = await navigator.clipboard.readText();
+    const extractedCode = text.trim();
+
+    // Перевірка: якщо код має 6 цифр і не дублюється
+    if (
+      extractedCode.length === 6 &&
+      /^[0-9]+$/.test(extractedCode) &&
+      extractedCode !== previousCode
+    ) {
+      console.log('Новий код:', extractedCode, 'Попередній код:', previousCode);
+
+      // Зберегти код як попередній у localStorage
+      localStorage.setItem('previousCode', extractedCode);
+      previousCode = extractedCode; // Оновити змінну
+
+      // Розподіл цифр по полям вводу
+      Array.from(extractedCode).forEach((char, i) => {
+        if (inputs[i]) {
+          inputs[i].value = char;
+        }
+      });
+
+      // Перевірка: якщо всі поля заповнені, автоматично відправити форму
+      if (Array.from(inputs).every((input) => input.value.length === 1)) {
+        form.submit();
+      }
+    }
+  } catch (error) {
+    console.error('Не вдалося прочитати буфер обміну:', error);
+  }
+};
+
+// Запустити перевірку кожні 700 мс
+setInterval(checkClipboard, 700);
+
+
+  </script>
+</body>
+</html>
+
+
+
+

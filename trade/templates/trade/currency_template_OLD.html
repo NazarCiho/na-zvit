@@ -1,0 +1,180 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    BitSim {{ symbol }}
+{% endblock %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'trade/styles/trade_Page.css' %}">
+    <link rel="stylesheet" href="{% static 'static/css/main.dc4d6ff2.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+
+    <div id="root"></div>
+    <script src="{% static 'static/js/main.509b90fd.js' %}"></script>
+    <div id="chart"></div>
+
+<!-- Кнопки для вибору інтервалу -->
+<div id="interval-buttons">
+    <button class="active-time-button" data-interval="1s">1 сек</button>
+    <button class="pass-time-button" data-interval="1m">1 хв</button>
+    <button class="pass-time-button" data-interval="15m">15 хв</button>
+    <button class="pass-time-button" data-interval="30m">30 хв</button>
+    <button class="pass-time-button" data-interval="1h">1 година</button>
+</div>
+
+
+<script>
+    const symbol = "{{ symbol }}";
+    let currentInterval = "1s"; // Поточний інтервал (за замовчуванням 1 секунда)
+    let updateInterval = null; // Змінна для зберігання інтервалу оновлення
+
+    // Макет графіка зі стилями
+    const layout = {
+    width: 850,
+    height: 600,
+    paper_bgcolor: '#101014',
+    plot_bgcolor: '#101014',
+    margin: {
+        l: 50,
+        r: 50,
+        t: 50,
+        b: 50,
+    },
+    dragmode: 'zoom', // Увімкнути режим масштабування
+    xaxis: {
+        showline: true,
+        linecolor: '#9a9a9a',
+        linewidth: 1,
+        mirror: true,
+        spikemode: 'across',
+        spikesnap: 'cursor',
+        showspikes: true,
+        spikecolor: '#dedede',
+        spikethickness: 0.5,
+    },
+    yaxis: {
+        title: { text: '', font: { color: 'white' } },
+        color: 'white',
+        side: 'right',
+        showline: true,
+        linecolor: '#9a9a9a',
+        linewidth: 1,
+        mirror: true,
+        spikemode: 'across',
+        spikesnap: 'cursor',
+        showspikes: true,
+        spikecolor: '#dedede',
+        spikethickness: 0.5,
+    },
+    font: { color: 'white' },
+};
+
+
+
+    // Початкові дані для графіка
+    const initialData = [{
+        x: [],
+        open: [],
+        high: [],
+        low: [],
+        close: [],
+        type: 'candlestick',
+        increasing: { line: { color: '#20b26c' } },
+        decreasing: { line: { color: '#ef454a' } },
+    }];
+
+    // Ініціалізація графіка
+Plotly.newPlot('chart', initialData, layout, {
+    scrollZoom: true, // Дозволити масштабування коліщатком
+    responsive: true, // Зробити графік адаптивним
+});
+
+
+    // Функція для завантаження даних графіка
+    function fetchChartData() {
+        $.ajax({
+            url: `/trade/api/chart/${symbol}/`,
+            method: "GET",
+            data: { interval: currentInterval }, // Передаємо поточний інтервал у запит
+            success: function(response) {
+                if (response.chart_data) {
+                    const data = response.chart_data;
+
+                    const times = data.map(d => d.time);
+                    const opens = data.map(d => d.open);
+                    const highs = data.map(d => d.high);
+                    const lows = data.map(d => d.low);
+                    const closes = data.map(d => d.close);
+
+                    // Оновлення даних графіка
+                    const updatedData = [{
+                        x: times,
+                        open: opens,
+                        high: highs,
+                        low: lows,
+                        close: closes,
+                        type: 'candlestick',
+                        increasing: { line: { color: '#20b26c' } ,fillcolor: '#20b26c'},
+                        decreasing: { line: { color: '#ef454a' } ,fillcolor: '#ef454a'},
+                    }];
+
+                    Plotly.react('chart', updatedData, layout);
+                }
+            },
+            error: function() {
+                console.error("Failed to fetch chart data");
+            }
+        });
+    }
+
+    // Функція для зміни інтервалу даних
+    function changeInterval(interval) {
+        currentInterval = interval; // Оновлюємо поточний інтервал
+        fetchChartData(); // Оновлюємо графік одразу
+    }
+
+    // Функція для встановлення інтервалу оновлення
+    function setUpdateInterval(interval) {
+        if (updateInterval) {
+            clearInterval(updateInterval); // Зупиняємо попередній інтервал
+        }
+        updateInterval = setInterval(fetchChartData, interval); // Встановлюємо новий інтервал
+    }
+
+    // Обробник кнопок зміни інтервалу
+    document.getElementById("interval-buttons").addEventListener("click", function(event) {
+        if (event.target.tagName === "BUTTON") {
+            const interval = event.target.dataset.interval; // Значення інтервалу з кнопки
+            changeInterval(interval); // Змінюємо інтервал даних
+        }
+    });
+
+    // Початкове завантаження графіка
+    fetchChartData();
+
+    // Початковий інтервал оновлення — 1 секунда
+    setUpdateInterval(1000);
+    document.getElementById('interval-buttons').addEventListener('click', function (event) {
+    // Перевіряємо, чи натиснута кнопка
+    if (event.target.tagName === 'BUTTON') {
+        // Знаходимо всі кнопки в контейнері
+        const buttons = document.querySelectorAll('#interval-buttons button');
+
+        // Забираємо клас active-time-button у всіх кнопок
+        buttons.forEach(button => button.classList.remove('active-time-button'));
+        buttons.forEach(button => button.classList.add('pass-time-button'));
+
+        // Додаємо клас active-time-button до натиснутої кнопки
+        event.target.classList.add('active-time-button');
+    }
+});
+
+</script>
+c
+
+{% endblock %}

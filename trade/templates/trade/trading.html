@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="trading-container">
+    <!-- TradingView віджет -->
+    <div class="chart-container">
+        {{ block.super }}
+    </div>
+
+    <!-- Торгові форми -->
+    <div class="trading-forms">
+        <div class="market-order">
+            <h3>Market Order</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ market_form.as_p }}
+                <button type="submit" name="market_order">Execute Market Order</button>
+            </form>
+        </div>
+
+        <div class="limit-order">
+            <h3>Limit Order</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ limit_form.as_p }}
+                <button type="submit" name="limit_order">Place Limit Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Активні ордери -->
+    <div class="active-orders">
+        <h3>Active Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in active_orders %}
+                <tr>
+                    <td>{{ order.get_order_type_display }}</td>
+                    <td>{{ order.currency }}</td>
+                    <td>{{ order.amount }}</td>
+                    <td>${{ order.limit_price }}</td>
+                    <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                    <td>
+                        <a href="{% url 'cancel_order' order.id %}" 
+                           class="cancel-button">Cancel</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Історія транзакцій -->
+    <div class="transaction-history">
+        <h3>Recent Transactions</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Currency</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in recent_transactions %}
+                <tr>
+                    <td>{{ tx.get_transaction_type_display }}</td>
+                    <td>{{ tx.currency }}</td>
+                    <td>{{ tx.amount }}</td>
+                    <td>${{ tx.price_usd }}</td>
+                    <td>${{ tx.total_usd }}</td>
+                    <td>{{ tx.get_status_display }}</td>
+                    <td>{{ tx.timestamp|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %} 

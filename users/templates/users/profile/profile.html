@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% block title %}BimSim | Профіль{% endblock %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'users/styles/profile.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/choices.js/10.0.0/choices.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/choices.js/10.0.0/choices.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <h1 class="profile-title">Профіль              </h1>
+
+    <div class="profile-overview">
+        <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+        <div class="profile-picture-section">
+            <img src="{{ user.profile.profile_picture }}" alt="Фото профілю" class="profile-picture">
+            <button id="change-picture-btn1" class="btn-photo-change">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+            <button id="change-picture-btn" class="btn btn-secondary">Змінити фото</button>
+        </div>
+        <hr>
+        {% if is_2fa_authenticated %}
+            <div class="verified">
+                <i class="bi bi-person-check-fill" style="font-size: 1.5rem;"></i>
+                <p class="success-message">Ви успішно налаштували двофакторну автентифікацію.</p>
+            </div>
+        {% else %}
+            <div class="two-factor-auth">
+                <div class="fa-warning">
+                    <i class="bi bi-exclamation-circle" style="font-size: 3.5rem;"></i>
+                    <div>
+                        <p class="warning-message">Рекомендуємо увімкнути двофакторну автентифікацію для додаткового захисту.</p>
+                        <a href="{% url 'two_factor_setup' %}" class="btn btn-primary">Налаштувати 2FA</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <br>
+    <h1 class="profile-title">Інформація                                         </h1>
+    <div class="profile-overview">
+        <div class="profile-info-item">
+            <p class="info-name">ID Користувача:</p>
+            <p class="info-data">{{ user.profile.custom_id }}</p>
+        </div>
+        <div class="profile-info-item">
+            <p class="info-name">Логін:</p>
+            <p class="info-data">{{ user.username }}</p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Ім'я:</p>
+            <p class="info-data">{{ user.first_name }}</p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Прізвище:</p>
+            <p class="info-data">{{ user.last_name }}</p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Електронна адреса:</p>
+            <p class="info-data">{{ user.email }}</p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Номер телефону:</p>
+            {% if user.profile.phone_number %}
+                <p class="info-data">{{ user.profile.phone_number }}</p>
+            {% else %}
+                <p class="info-data"><button class="set-data-btn" id="set-phone-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
+            {% endif %}
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Країна/Регіон:</p>
+            {% if user.profile.country %}
+                <p class="info-data">{{ user.profile.country }}</p>
+            {% else %}
+                <p class="info-data"><button class="set-data-btn" id="set-country-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
+            {% endif %}
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Дата реєстрації:</p>
+            <p class="info-data">{{ user.date_joined }}</p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name">Дата останнього входу:</p>
+            <p class="info-data">{{ user.last_login }}</p>
+        </div>
+    </div>
+<div id="phone-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h3>Встановити номер телефону</h3>
+    <form id="phone-form" method="post">
+      {% csrf_token %}
+      <label for="phone-input">Номер телефону:</label>
+      <input type="tel" id="phone-input" name="phone_number" pattern="\d{10}" required>
+      <button type="submit" class="btn btn-primary">Зберегти</button>
+    </form>
+  </div>
+</div>
+
+<div id="country-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h3>Встановити країну</h3>
+    <form id="country-form" method="post">
+      {% csrf_token %}
+      <label for="country-select">Країна:</label>
+      <select id="country-select" name="country" required></select>
+      <button type="submit" class="btn btn-primary">Зберегти</button>
+    </form>
+  </div>
+</div>
+
+    <br>
+    <h1 class="profile-title">Небезпечна зона</h1>
+    <div class="profile-overview">
+        <div class="profile-info-item">
+            <p class="info-name" style="color:#f1493f"><i class="bi bi-box-arrow-right"style="font-size: 1.3rem;"></i>     Вихід з акаунту</p>
+            <p class="info-data"><button id="logout-account" class="account-btn"><a href="{% url 'logout' %}"><i class="bi bi-caret-right-fill"></i></a></button></p>
+        </div>
+        <hr>
+        <div class="profile-info-item">
+            <p class="info-name" style="color:#f1493f"><i class="bi bi-x-octagon" style="font-size: 1.3rem;"></i>     Закрити акаунт</p>
+            <p class="info-data">
+                <button id="close-account" class="account-btn">
+                    <i class="bi bi-caret-right-fill"></i>
+                </button>
+            </p>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Оновити фото профілю</h3>
+            <form id="upload-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <button type="button" id="select-file-btn" class="btn btn-secondary">Вибрати файл</button>
+                <div id="drop-zone">
+                    <p>Перетягніть файл сюди або натисніть, щоб вибрати. (до 32 мб)</p>
+                    <input type="file" name="profile_picture" id="file-input" accept="image/*" hidden>
+                </div>
+                <button type="submit" id="update-btn" class="btn btn-primary" disabled>Встановити фото профілю</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('change-picture-btn').addEventListener('click', function () {
+        document.getElementById('modal').style.display = 'block';
+    });
+    document.getElementById('change-picture-btn1').addEventListener('click', function () {
+        document.getElementById('modal').style.display = 'block';
+    });
+    document.querySelector('.close-btn').addEventListener('click', function () {
+        document.getElementById('modal').style.display = 'none';
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target === document.getElementById('modal')) {
+            document.getElementById('modal').style.display = 'none';
+        }
+    });
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const selectFileBtn = document.getElementById('select-file-btn');
+
+    selectFileBtn.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            dropZone.querySelector('p').textContent = `Обрано файл: ${fileInput.files[0].name}`;
+        }
+    });
+
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+            dropZone.querySelector('p').textContent = `Обрано файл: ${fileInput.files[0].name}`;
+        }
+    });
+
+    const updateBtn = document.getElementById('update-btn');
+
+    function checkFileSelection() {
+        if (fileInput.files.length > 0) {
+            updateBtn.disabled = false;
+            updateBtn.classList.remove('disabled');
+        } else {
+            updateBtn.disabled = true;
+            updateBtn.classList.add('disabled');
+        }
+    }
+
+    fileInput.addEventListener('change', checkFileSelection);
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        checkFileSelection();
+    });
+    document.getElementById("close-account").addEventListener("click", function() {
+    console.log('close')
+    if (confirm("Ви впевнені, що хочете видалити акаунт? Цю дію не можна скасувати!")) {
+        fetch("{% url 'delete_account' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin"
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/"; // Перенаправлення на головну
+        })
+        .catch(error => console.error("Помилка:", error));
+    }
+});
+
+    try{
+    // Відкриття модалей
+    document.getElementById('set-phone-btn').addEventListener('click', function () {
+        console.log('set-phone')
+        document.getElementById('phone-modal').style.display = 'block';
+    });
+    }catch {}
+    try{
+    document.getElementById('set-country-btn').addEventListener('click', function () {
+        console.log('set-country')
+        document.getElementById('country-modal').style.display = 'block';
+    });
+    }catch {}
+    /// Підключення intl-tel-input для номера телефону
+    const phoneInput = document.getElementById('phone-input');
+    const iti = window.intlTelInput(phoneInput, {
+      initialCountry: 'ua',
+      utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
+    });
+
+    // Підключення Choices.js для списку країн
+    fetch('https://restcountries.com/v3.1/all')
+      .then(response => response.json())
+      .then(countries => {
+        const countrySelect = document.getElementById('country-select');
+        countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+
+        countries.forEach(country => {
+          const option = document.createElement('option');
+          option.value = country.name.common;
+          option.textContent = `${country.flag} ${country.name.common}`;
+          countrySelect.appendChild(option);
+        });
+
+        new Choices(countrySelect, {
+          searchEnabled: true,
+          itemSelectText: '',
+        });
+      });
+
+    // Закриття модалок
+    document.querySelectorAll('.close-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.closest('.modal').style.display = 'none';
+      });
+    });
+
+    window.addEventListener('click', function (event) {
+      document.querySelectorAll('.modal').forEach(function (modal) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+
+    // Відправлення форм
+    const handleSubmit = (formId, endpoint) => {
+      document.getElementById(formId).addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message || data.error);
+          location.reload();
+        });
+      });
+    };
+
+    handleSubmit('phone-form', '{% url "update_phone" %}');
+    handleSubmit('country-form', '{% url "update_country" %}');
+    document.getElementById("phone-input").addEventListener("input", function (e) {
+    this.value = this.value.replace(/\D/g, ""); // Видаляє всі нецифрові символи
+});
+
+</script>
+{% endblock %}

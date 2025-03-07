@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitSim | Реєстрація</title>
+
+  <link rel="stylesheet" href="{% static 'users/styles/register+login.css' %}">
+  <link rel="stylesheet" href="{% static 'users/styles/animated_bg.css' %}">
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="banner">
+    <div class="content">
+      <section class="container forms">
+        <div class="form login">
+          <div class="form-content">
+            <img class="logo" src="https://i.ibb.co/S6YcssD/4-1.png" alt="Logo"></a>
+            <header>Вітаємо на BitSim</header>
+            <p class="prev-text">Введіть свою електронну адресу</p>
+
+            <!-- Початок форми -->
+            <form method="post" action="">
+              {% csrf_token %}
+              <div class="field input-field">
+                <input type="email" name="email" placeholder="Електронна адреса" class="input" required>
+              </div>
+
+              <div class="field button-field">
+                <button type="submit">Надіслати код підтвердження</button>
+              </div>
+            </form>
+            <!-- Кінець форми -->
+
+            <div class="form-link">
+              <span>Уже маєте акаунт? <a href="{% url 'login' %}" class="link signup-link">Увійти</a></span>
+            </div>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="media-options">
+            <a href="{% url 'social:begin' 'github' %}" class="field google">
+              <img src="https://img.icons8.com/?size=100&id=12599&format=png&color=FFFFFF" class="google-img">
+              <span>Продовжити з Github</span>
+            </a>
+          </div>
+
+          <div class="media-options">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="field google">
+              <img src="https://img.icons8.com/?size=100&id=17949&format=png&color=000000" class="google-img">
+              <span>Продовжити з Google</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
+      <p class="rights">© 2024-2025 BitSim. All rights reserved. Copyright by Nazar Tsikhotsʹkyy.</p>
+    </div>
+  </div>
+</body>
+</html>

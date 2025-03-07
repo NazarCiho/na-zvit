@@ -1,0 +1,80 @@
+
+body{
+    background-color: #101014;
+    color: white;
+}
+.try-now{
+    text-decoration: none;
+    background: #0a8c0f;
+    color: white;
+    padding: 13px 15px;
+    border-radius: 50px;
+    font-weight: 500;
+    86px;
+}
+.bg-igm{
+    position: absolute;
+    left: 0px;
+    top: -10px;
+    z-index: -1;
+    bottom: 0px;
+    width: 1302px;
+    height: 679px;
+}
+
+.site-title{
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 100px;
+}
+
+.site-subTitle{
+    font-size: 18px;
+    font-weight: 400;
+    margin-top: 20px;
+}
+
+.flex-start-container{
+    display: flex;
+    gap: 30px;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 73px;
+    margin-left: 214px;
+}
+
+.coin {
+    width: 120px;
+    position: absolute;
+    animation: sliding 10s infinite;
+}
+
+.coin1 {
+    left: 900px;
+    top: 160px;
+    animation-delay: 0s; /* Затримка для першої монети */
+}
+
+.coin2 {
+    left: 700px;
+    top: 350px;
+    animation-delay: 1s; /* Затримка для другої монети */
+}
+
+.coin3 {
+    left: 800px;
+    top: 500px;
+    animation-delay: 2s; /* Затримка для третьої монети */
+}
+
+.coin4 {
+    left: 1200px;
+    top: 400px;
+    animation-delay: 0.5s; /* Затримка для четвертої монети */
+}
+
+@keyframes sliding {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(70px); }
+    100% { transform: translateY(0px); }
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Помилка {{ status_code }}</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; margin: 50px; }
+        h1 { font-size: 50px; color: #ff3333; }
+        p { font-size: 20px; }
+        a { text-decoration: none; color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Помилка {{ status_code }}</h1>
+    <p>{{ message }}</p>
+    <a href="{% url 'homepage' %}">Повернутися на головну</a>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 0;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            background-color: #191c22;
+            padding: 10px;
+            border-radius: 8px 8px 0 0;
+        }
+        .header h1 {
+            color: #fff;
+            font-size:23px;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #9f9c9c;
+            margin-top: 20px;
+            padding-bottom: 10px;
+        }
+        .logo{
+            height:55px;
+        }
+        p{
+            margin:10px;
+        }
+        .container-bg{
+            background-color: #000000;
+            border-radius: 15px;
+        }
+        .text{
+            color: white;
+            margin-left: 20px;
+            font-size: 14px;
+            font-family: 'Google Sans';
+        }
+        .start-text{
+            color: white;
+            margin-top: 30px;
+            font-size: 21px;
+            margin-left: 20px;
+        }
+        .time-limit{
+            color: black;
+            background: green;
+            font-size: 13px;
+            height: fit-content;
+            text-align: center;
+        }
+        .code {
+            font-size: 26px;
+            font-weight: bold;
+            color: #0a8c0f;
+            text-align: center;
+            margin: 20px 0;
+            justify-content: center;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="container-bg">
+            <div class="header">
+                <img src="https://i.ibb.co/S6YcssD/4-1.png" class="logo">
+                <h1>Привіт {{ email }}!</h1>
+            </div>
+            <h3 class="start-text">Підтвердження вашої реєстрації</h3>
+            <p class="text">Вітаємо!</p>
+            <p class="text">Ось ваш код підтвердження:</p>
+            <div class="code">
+                {{ confirmation_code }}
+            </div>
+            <div class="time-limit">
+                    Термін дії: 10 хвилин!
+                </div>
+            <p class="text">Будь ласка, не повідомляйте цей код іншим особам. Дякуємо за довіру до нас!</p>
+            <div class="footer">
+                <p>Команда Bitsim</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

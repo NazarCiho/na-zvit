@@ -1,0 +1,639 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    BitSim {{ symbol }}
+{% endblock %}
+{% load static %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'trade/styles/trade_Page.css' %}">
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        .slider-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+        .slider-labels span {
+            font-size: 12px;
+            color: #666;
+        }
+
+        #amount-slider {
+            width: 100%;
+            margin: 10px 0;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 10px;
+            border-radius: 5px;
+            background: #2c2c2c;
+            outline: none;
+        }
+
+        #amount-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        #amount-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        #amount-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: #2c2c2c;
+            border-radius: 5px;
+        }
+
+        #amount-slider::-moz-range-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: #2c2c2c;
+            border-radius: 5px;
+        }
+
+        .buy-sell-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #1e222d;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        .buy-sell-tabs .tab-button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .buy-sell-tabs .tab-button.active {
+            background: #2c3040;
+        }
+
+        .buy-sell-tabs .buy-tab.active {
+            background: #26a69a;
+        }
+
+        .buy-sell-tabs .sell-tab.active {
+            background: #ef5350;
+        }
+
+        .trade-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .buy-tab.active ~ form .trade-button {
+            background: #26a69a;
+        }
+
+        .sell-tab.active ~ form .trade-button {
+            background: #ef5350;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="trading-page-container">
+    <div class="main-content">
+        <!-- Ліва частина - графік -->
+        <div class="chart-section">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container" style="display: flex; align-items: center; gap: 20px;">
+                <div class="tradingview-widget-container__widget"></div>
+                <div class="price-stats-container">
+                    <div class="stat-item">
+                        <span class="label">Макс. за 24 год</span>
+                        <span class="value high-24h">Загрузка...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Мін. за 24 год</span>
+                        <span class="value low-24h">Загрузка...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Обсяг торгів за 24 год</span>
+                        <span class="value volume-24h">Загрузка...</span>
+                    </div>
+                </div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js">
+                {
+                    "symbol": "{{ symbol }}",
+                    "width": "320",
+                    "isTransparent": true,
+                    "colorTheme": "dark",
+                    "locale": "en",
+                    "largeChartUrl": "https://bitsim.com:8000/trade/spot/BTCUSDT/"
+                }
+                </script>
+            </div>
+            <hr class="hr-line">
+            <!-- TradingView Widget END -->
+
+            <div id="tradingview_chart"></div>
+            <script type="text/javascript">
+                new TradingView.widget({
+                    "container_id": "tradingview_chart",
+                    "width": "80%",
+                    "height": "600",
+                    "symbol": "{{ symbol }}",
+                    "interval": "1",
+                    "timezone": "Europe/Bucharest",
+                    "theme": "dark",
+                    "style": "1",
+                    "withdateranges": true,
+                    "hide_side_toolbar": false,
+                    "colorTheme": "dark",
+                    "backgroundColor": "rgb(16, 16, 20)",
+                    "locale": "ua",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "show_popup_button": true,
+                    "popup_width": "1000",
+                    "popup_height": "650"
+                });
+            </script>
+        </div>
+        <hr class="hr-vertical">
+        <!-- Права частина - торгівля -->
+        <div class="trading-panel">
+            <!-- Баланс -->
+            <div class="wallet-info">
+                <div class="balance-item main-balance">
+                    <span>Доступний баланс:</span>
+                    <span class="amount"> ${{ wallet.balance_usd|floatformat:2 }}</span>
+                </div>
+                {% if wallet.crypto_balances %}
+                    {% for currency, amount in wallet.crypto_balances.items %}
+                    <div class="balance-item">
+                        <span>{{ currency }}</span>
+                        <span class="amount">{{ amount|floatformat:8 }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Торгові форми -->
+            <div class="trade-box">
+                <div class="trade-type-tabs">
+                    <button class="tab-button active" data-tab="spot">Спот</button>
+                    <button class="tab-button" data-tab="margin">Маржа</button>
+                </div>
+
+                <div class="order-type-tabs">
+                    <button class="tab-button active" data-tab="market">Маркет</button>
+                    <button class="tab-button" data-tab="limit">Ліміт</button>
+                </div>
+
+                <div class="buy-sell-tabs">
+                    <button class="tab-button active buy-tab" data-trade-type="BUY">Купівля</button>
+                    <button class="tab-button sell-tab" data-trade-type="SELL">Продаж</button>
+                </div>
+
+                <!-- Market Order Form -->
+                <div class="order-form active" id="market-tab">
+                    <form method="POST" class="trade-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Кількість (<span class="amount-currency">{{ symbol }}</span>)</label>
+                            {{ market_form.amount }}
+                            <input type="hidden" name="transaction_type" id="transaction_type" value="BUY">
+                            <input type="hidden" id="wallet-balance-hidden" value="{{ wallet.balance_usd }}">
+                            <div class="slider-container">
+                                <input type="range" id="amount-slider" min="0" max="100" value="0" step="12.5" class="trade-slider">
+                                <div class="slider-labels">
+                                    <span>0%</span>
+                                    <span>25%</span>
+                                    <span>50%</span>
+                                    <span>75%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="amount-display">
+                                <span>Обрана сума: </span>
+                                <span id="selected-amount">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="estimated-total">
+                            <span>Всього</span>
+                            <span class="total-value">$0.00</span>
+                        </div>
+                        <button type="submit" class="trade-button">Підтвердити</button>
+                    </form>
+                </div>
+
+                <!-- Limit Order Form -->
+                <div class="order-form" id="limit-tab" style="display: none;">
+                    <form method="POST" class="trade-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Ціна (USDT)</label>
+                            {{ limit_form.limit_price }}
+                        </div>
+                        <div class="form-group">
+                            <label>Кількість (<span class="amount-currency">{{ symbol }}</span>)</label>
+                            {{ limit_form.amount }}
+                            <input type="hidden" name="transaction_type" id="limit_transaction_type" value="BUY">
+                            <div class="slider-container">
+                                <input type="range" id="limit-amount-slider" min="0" max="100" value="0" step="25" class="trade-slider">
+                                <div class="slider-labels">
+                                    <span>0%</span>
+                                    <span>25%</span>
+                                    <span>50%</span>
+                                    <span>75%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                            <div class="amount-display">
+                                <span>Обрана сума: </span>
+                                <span id="limit-selected-amount">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="estimated-total">
+                            <span>Всього</span>
+                            <span class="limit-total-value">$0.00</span>
+                        </div>
+                        <button type="submit" class="trade-button">Підтвердити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Нижня частина - ордери та історія -->
+    <div class="bottom-panel">
+        <div class="panel-tabs">
+            <button class="panel-tab active" data-panel="open-orders">Open Orders</button>
+            <button class="panel-tab" data-panel="order-history">Order History</button>
+            <button class="panel-tab" data-panel="trade-history">Trade History</button>
+        </div>
+
+        <!-- Open Orders -->
+        <div class="panel-content active" id="open-orders">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Pair</th>
+                        <th>Type</th>
+                        <th>Side</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Filled</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in active_orders %}
+                    <tr>
+                        <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ order.currency }}</td>
+                        <td>{{ order.get_order_type_display }}</td>
+                        <td class="{{ order.order_type|lower }}">{{ order.order_type|slice:"6:" }}</td>
+                        <td>${{ order.limit_price|floatformat:2 }}</td>
+                        <td>{{ order.amount|floatformat:8 }}</td>
+                        <td>{{ order.filled_amount|floatformat:8 }}</td>
+                        <td>${{ order.total_usd|floatformat:2 }}</td>
+                        <td><a href="{% url 'cancel_order' order.id %}" class="cancel-button">Cancel</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Trade History -->
+        <div class="panel-content" id="trade-history" style="display: none;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Pair</th>
+                        <th>Side</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_transactions %}
+                    <tr>
+                        <td>{{ tx.timestamp|date:"Y-m-d H:i" }}</td>
+                        <td>{{ tx.currency }}</td>
+                        <td class="{{ tx.transaction_type|lower }}">{{ tx.transaction_type }}</td>
+                        <td>${{ tx.price_usd|floatformat:2 }}</td>
+                        <td>{{ tx.amount|floatformat:8 }}</td>
+                        <td>${{ tx.total_usd|floatformat:2 }}</td>
+                        <td class="status-{{ tx.status|lower }}">{{ tx.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Функція для встановлення типу транзакції
+function setTransactionType(type) {
+    document.getElementById('transaction_type').value = type;
+}
+
+// Ваш існуючий скрипт для графіка
+var container = document.getElementById('tradingview_chart');
+var children = container.querySelectorAll('*');
+children.forEach(function(child) {
+    child.style.setProperty('margin', '-20px 0 0 -1px', 'important');
+});
+
+// Додаємо функціональність для табів
+document.addEventListener('DOMContentLoaded', function() {
+    // Додаємо обробники для кнопок купівлі/продажу
+    const buyButton = document.querySelector('.trade-button.buy');
+    const sellButton = document.querySelector('.trade-button.sell');
+
+    if (buyButton) {
+        buyButton.addEventListener('click', function() {
+            setTransactionType('BUY');
+        });
+    }
+
+    if (sellButton) {
+        sellButton.addEventListener('click', function() {
+            setTransactionType('SELL');
+        });
+    }
+
+    // Видаляємо атрибути onclick з кнопок
+    document.querySelectorAll('.trade-button').forEach(button => {
+        button.removeAttribute('onclick');
+    });
+
+    // Функція для отримання поточної ціни
+    async function getCurrentPrice(symbol) {
+        try {
+            const response = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${symbol}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return parseFloat(data.price);
+        } catch (error) {
+            console.error('Error fetching price:', error);
+            return 0;
+        }
+    };
+
+    // Оновлення ціни та загальної вартості
+    async function updatePriceAndTotal() {
+        const symbol = "{{ symbol }}";
+        const amount = parseFloat(amountInput.value || 0);
+        const price = await getCurrentPrice(symbol);
+        
+        if (price > 0) {
+            totalValue.textContent = `$${(amount * price).toFixed(2)}`;
+        }
+    };
+
+    // Отримання даних з API Binance
+    async function fetchCryptoData(symbol) {
+        try {
+            const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return {
+                high: data.highPrice,
+                low: data.lowPrice,
+                volume: data.volume
+            };
+        } catch (error) {
+            console.error('Error fetching crypto data:', error);
+            return {
+                high: 'N/A',
+                low: 'N/A',
+                volume: 'N/A'
+            };
+        }
+    };
+
+    // Оновлення статистики на сторінці
+    async function updateStats() {
+        const symbol = "{{ symbol }}";
+        const stats = await fetchCryptoData(symbol);
+        
+        document.querySelector('.high-24h').textContent = `$${parseFloat(stats.high).toFixed(2)}`;
+        document.querySelector('.low-24h').textContent = `$${parseFloat(stats.low).toFixed(2)}`;
+        document.querySelector('.volume-24h').textContent = `${parseFloat(stats.volume).toFixed(2)} ${symbol}`;
+    };
+
+    // Виклик функції для оновлення статистики
+    updateStats();
+
+    // Перемикання між Market/Limit
+    const orderTypeTabs = document.querySelectorAll('.order-type-tabs .tab-button');
+    orderTypeTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            orderTypeTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const forms = document.querySelectorAll('.order-form');
+            forms.forEach(form => form.style.display = 'none');
+            document.getElementById(`${tab.dataset.tab}-tab`).style.display = 'block';
+        });
+    });
+
+    // Перемикання між панелями історії
+    const panelTabs = document.querySelectorAll('.panel-tab');
+    panelTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            panelTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const panels = document.querySelectorAll('.panel-content');
+            panels.forEach(panel => panel.style.display = 'none');
+            document.getElementById(tab.dataset.panel).style.display = 'block';
+        });
+    });
+
+    // Кнопки відсотків для суми
+    const percentButtons = document.querySelectorAll('.amount-buttons button');
+    percentButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const percent = parseInt(button.dataset.percent);
+            const form = button.closest('form');
+            const amountInput = form.querySelector('input[name="amount"]');
+            // Тут можна додати логіку розрахунку суми на основі балансу
+        });
+    });
+
+    const walletBalance = parseFloat(document.getElementById('wallet-balance-hidden').value);
+    const amountInput = document.querySelector('input[name="amount"]');
+    const totalValue = document.querySelector('.total-value');
+    const slider = document.getElementById('amount-slider');
+    const selectedAmountDisplay = document.getElementById('selected-amount');
+
+    // Set the slider max value to wallet balance
+    slider.max = walletBalance;
+
+    // Функція для оновлення значень на формі з урахуванням типу операції
+    async function updateFormValues(percentage, isMarketOrder = true) {
+        const symbol = "{{ symbol }}";
+        const walletBalance = parseFloat(document.getElementById('wallet-balance-hidden').value);
+        const price = await getCurrentPrice(symbol);
+        const transactionType = isMarketOrder ? 
+            document.getElementById('transaction_type').value : 
+            document.getElementById('limit_transaction_type').value;
+        
+        if (price > 0) {
+            if (transactionType === 'BUY') {
+                // Для купівлі використовуємо USD
+                const usdAmount = (walletBalance * percentage) / 25;
+                const cryptoAmount = usdAmount / price;
+                
+                if (isMarketOrder) {
+                    document.getElementById('id_amount').value = cryptoAmount.toFixed(8);
+                    selectedAmountDisplay.textContent = `$${usdAmount.toFixed(2)}`;
+                    totalValue.textContent = `$${usdAmount.toFixed(2)}`;
+                } else {
+                    
+                    const limitPrice = parseFloat(document.getElementById('id_limit_price').value) || price;
+                    const limitCryptoAmount = usdAmount / limitPrice;
+                    document.getElementById('id_amount').value = limitCryptoAmount.toFixed(8);
+                    document.getElementById('limit-selected-amount').textContent = `$${usdAmount.toFixed(2)/2}`;
+                    document.querySelector('.limit-total-value').textContent = `$${usdAmount.toFixed(2)}`;
+                }
+            } else {
+                // Для продажу використовуємо криптовалюту
+                const cryptoBalance = parseFloat("{{ crypto_balance }}");
+                const cryptoAmount = (cryptoBalance * percentage) / 25;
+                const usdValue = cryptoAmount * price;
+                
+                if (isMarketOrder) {
+                    document.getElementById('id_amount').value = cryptoAmount.toFixed(8);
+                    selectedAmountDisplay.textContent = `${cryptoAmount.toFixed(8)} {{ symbol }}`;
+                    totalValue.textContent = `$${usdValue.toFixed(2)}`;
+                } else {
+                    const limitPrice = parseFloat(document.getElementById('id_limit_price').value) || price;
+                    const limitUsdValue = cryptoAmount * limitPrice;
+                    document.getElementById('id_amount').value = cryptoAmount.toFixed(8);
+                    document.getElementById('limit-selected-amount').textContent = `${cryptoAmount.toFixed(4)/2} {{ symbol }}`;
+                    document.querySelector('.limit-total-value').textContent = `$${limitUsdValue.toFixed(2)}`;
+                }
+            }
+        }
+    }
+
+    // Оновлюємо обробники для вкладок купівлі/продажу
+    const buySellTabs = document.querySelectorAll('.buy-sell-tabs .tab-button');
+    buySellTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            buySellTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const tradeType = tab.dataset.tradeType;
+            document.getElementById('transaction_type').value = tradeType;
+            document.getElementById('limit_transaction_type').value = tradeType;
+            
+            // Оновлюємо стилі кнопок
+            document.querySelectorAll('.trade-button').forEach(button => {
+                button.classList.toggle('sell-mode', tradeType === 'SELL');
+            });
+
+            // Оновлюємо значення на формах
+            const marketSliderValue = document.getElementById('amount-slider').value;
+            const limitSliderValue = document.getElementById('limit-amount-slider').value;
+            updateFormValues(parseInt(marketSliderValue), true);
+            updateFormValues(parseInt(limitSliderValue), false);
+        });
+    });
+
+    // Обробники для повзунків
+    const marketSlider = document.getElementById('amount-slider');
+    const limitSlider = document.getElementById('limit-amount-slider');
+
+    marketSlider.addEventListener('input', function() {
+        updateFormValues(parseInt(this.value), true);
+    });
+
+    limitSlider.addEventListener('input', function() {
+        updateFormValues(parseInt(this.value), false);
+    });
+
+    // Оновлення при зміні ціни ліміт ордера
+    document.getElementById('id_limit_price').addEventListener('input', function() {
+        const limitSliderValue = document.getElementById('limit-amount-slider').value;
+        updateFormValues(parseInt(limitSliderValue), false);
+    });
+
+    document.querySelector('.trade-form').addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+        const transactionType = document.getElementById('transaction_type').value;
+        
+        if (!transactionType) {
+            alert('Будь ласка, виберіть тип операції (Купівля/Продаж)');
+            return;
+        }
+
+        try {
+            const response = await fetch(window.location.href, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Отримано не JSON відповідь');
+            }
+
+            const data = await response.json();
+            alert(data.message);
+            
+            if (data.status === 'success') {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Помилка при виконанні операції: ' + error.message);
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .input-container { margin-bottom: 20px; }
+    canvas { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>Crypto Dashboard</h1>
+
+  <div class="input-container">
+    <input type="text" id="query" placeholder="Search for a symbol (e.g., BTC)" />
+    <button onclick="loadChartData()">Load Onchain Data</button>
+  </div>
+
+  <canvas id="cryptoChart"></canvas>
+
+  <script>
+    let chart;
+
+    function loadChartData() {
+      const query = document.getElementById('query').value || 'BTC';
+      fetch(`/get_chart_data1?query=${query}`)
+        .then(response => response.json())
+        .then(data => {
+          const labels = data.map(point => point.x);
+          const values = data.map(point => point.y);
+
+          if (chart) {
+            chart.destroy();
+          }
+
+          const ctx = document.getElementById('cryptoChart').getContext('2d');
+          chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: `${query} Onchain Data`,
+                data: values,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { display: true }
+              },
+              scales: {
+                x: { title: { display: true, text: 'Date' } },
+                y: { title: { display: true, text: 'Transaction Value (USD)' } }
+              }
+            }
+          });
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+/* Google Fonts - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  color: white;
+}
+
+.container {
+  height: 95vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  column-gap: 30px;
+}
+
+.form {
+  position: absolute;
+  max-width: 430px;
+  width: 100%;
+  padding: 30px;
+  border-radius: 6px;
+  background: #111;
+  border: 1px solid #2b3139;
+  border-radius: 25px;
+}
+
+.form.signup {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.forms.show-signup .form.signup {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.forms.show-signup .form.login {
+  opacity: 0;
+  pointer-events: none;
+}
+
+header {
+  font-size: 28px;
+  font-weight: 600;
+  color: #eaecef;
+}
+
+form {
+  margin-top: 30px;
+}
+
+.form .field {
+  position: relative;
+  height: 50px;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 100px;
+}
+
+.field input,
+.field button {
+  height: 100%;
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 10px;
+}
+
+.field input {
+    outline: none;
+    padding: 0 15px;
+    border: 1px solid #2b3139;
+    background-color: #111;
+    color: #0a8c0f;
+    transition: all 0.5s ease;
+    font-size: 17px;
+}
+
+.field input:focus {
+  border-bottom-width: 2px;
+  border: 1px solid #0a8c0f;
+}
+
+.field input::placeholder {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+.field input:focus::placeholder {
+  opacity: 0;
+}
+.eye-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #8b8b8b;
+  cursor: pointer;
+  padding: 5px;
+}
+.prev-text{
+    color: #eaecef;
+    margin-bottom: -15px;
+    margin-top: 20px;
+}
+.logo{
+    width: 160px;
+    margin-bottom: 10px;
+}
+.field button {
+  color: #fff;
+  background-color: #0a8c0f;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.field button:hover {
+  background-color: #004703;
+}
+
+.form-link {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.form-link span,
+.form-link a {
+  font-size: 14px;
+  font-weight: 400;
+  color: #e7e7e7;
+}
+
+.form a {
+  font-family: 'Rubik';
+  font-size:15px;
+  color: #0a8c0f;
+  font-weight:600;
+  text-decoration: none;
+}
+
+.form-content a:hover {
+  text-decoration: underline;
+}
+
+.line {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  margin: 36px 0;
+  background-color: #d4d4d4;
+}
+
+.line::before {
+  content: 'Або';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #111;
+  color: #f7f7f7;
+  padding: 0 15px;
+}
+
+.media-options a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a.facebook {
+  color: #fff;
+  background-color: #4267b2;
+}
+
+a.facebook .facebook-icon {
+  height: 28px;
+  width: 28px;
+  color: #0171d3;
+  font-size: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.facebook-icon,
+img.google-img {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+}
+
+img.google-img {
+  height: 22px;
+  width: 22px;
+  object-fit: cover;
+}
+
+a.google {
+  border: 1px solid #2b3139;
+}
+
+a.google span {
+  font-weight: 500;
+  color: #eaecef;
+}
+
+@media screen and (max-width: 400px) {
+  .form {
+    padding: 20px 10px;
+  }
+
+}
+
+
+
+.rights{
+    color: #0a8c0f;
+    font-size: 14px;
+}
+#toggle-password {
+  color: #919191;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+

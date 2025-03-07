@@ -1,0 +1,74 @@
+<!-- crypto_chart.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Chart</title>
+    <script src="https://unpkg.com/react-vis/dist/dist.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/react-vis/dist/style.css">
+    <style>
+        .charty {
+            margin-top: 20px;
+        }
+        .inputDiv {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="inputDiv">
+        <input id="symbolInput" placeholder="Search for a symbol" value="{{ symbol }}">
+        <button onclick="loadChartData()">Load Onchain Data</button>
+    </div>
+
+    <div class="charty">
+        <div id="chart"></div>
+    </div>
+
+    <script>
+        const chartData = {{ chart_data|safe }};
+        const symbol = "{{ symbol }}";
+
+        function loadChartData() {
+            const symbol = document.getElementById('symbolInput').value;
+            window.location.href = `?symbol=${symbol}`;
+        }
+
+        function renderChart() {
+            const { XYPlot, VerticalBarSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis } = window.ReactVis;
+
+            const margin = { left: 50, right: 20, top: 10, bottom: 40 };
+            const width = 800 - margin.left - margin.right;
+            const height = 400 - margin.top - margin.bottom;
+
+            const xDomain = chartData.map(d => d.x);
+            const yDomain = [0, Math.max(...chartData.map(d => d.y))];
+
+            ReactDOM.render(
+                <XYPlot
+                    width={width}
+                    height={height}
+                    xType="time"
+                    margin={margin}
+                    xDomain={xDomain}
+                    yDomain={yDomain}
+                >
+                    <VerticalGridLines />
+                    <HorizontalGridLines />
+                    <XAxis title="Dates" />
+                    <YAxis title="Volume (Transactions * Average Value $USD)" />
+                    <VerticalBarSeries
+                        data={chartData}
+                        opacity={0.3}
+                        color="#40FEFF"
+                    />
+                </XYPlot>,
+                document.getElementById('chart')
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', renderChart);
+    </script>
+</body>
+</html>

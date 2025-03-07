@@ -1,0 +1,444 @@
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-top: 56px;
+}
+.logo{
+    width: 109px;
+}
+main {
+    flex: 1; /* Забезпечує, що контент займає весь простір між хедером і футером */
+}
+
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+.navbar{
+    background-color:black;
+    font-family:Verdana;
+}
+footer{
+    background-color:black;
+}
+.navbar-brand{
+    color: white;
+}
+.nav-link{
+    color: white;
+    max-height:40px;
+}
+.nav-link:hover{
+    color: #11874a;
+}
+.register{
+    background-color: #11874a;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius:13px;
+    margin-right:10px;
+    transition: 0.3s ease;
+}
+.register:hover{
+    background-color: #08562e;
+    color:white;
+    box-shadow: 0 0 5px white;
+}
+.login{
+    background-color: #292929;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius:13px;
+    margin-right:10px;
+    transition: 0.3s ease;
+}
+.login:hover{
+    background-color: #8a8a8a;
+    box-shadow: 0 0 5px white;
+}
+.lang-ico {
+    width: 30px;
+    cursor: pointer;
+    margin-top: 5px;
+    border-radius: 50px;
+    transition: 0.2s ease;
+}
+
+.lang-ico:hover {
+    box-shadow: 0 0 5px white;
+    content: url('https://i.ibb.co/F0gmMth/language-24dp-11874-A-FILL0-wght400-GRAD0-opsz24.png');
+}
+.nav-item{
+    position: relative;
+    margin-right:10px;
+    align-items: center;
+    display: flex;
+}
+.dropdown-menu {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: -70%;
+    background-color: #1b1b1d;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 280px;
+    height: fit-content;
+    border-radius: 15px;
+    list-style: none;
+    display: none; /* Приховане за замовчуванням */
+    opacity: 0; /* Прозорість 0, щоб приховати */
+    visibility: hidden; /* Запобігає взаємодії з елементом */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Плавний перехід */
+}
+
+
+.dropdown-menu li {
+    padding: 0.5em 1em;
+}
+
+.dropdown-menu li a {
+    padding: 0 0;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.dropdown-container {
+    display: flex;
+    cursor: pointer;
+}
+.dropdown-container:hover .profile-ico-hover {
+    opacity: 1;
+}
+.dropdown-container:hover .profile-ico {
+    opacity: 0;
+}
+
+.profile-ico-wrapper {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.profile-ico,
+.profile-ico-hover {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.2s ease; /* Плавна зміна прозорості */
+}
+
+.profile-ico-hover {
+    opacity: 0; /* Приховане зображення за замовчуванням */
+}
+
+
+.lang-ico {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden; /* Щоб приховати зайві елементи */
+    margin: 0;
+}
+
+.lang-ico img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transition: opacity 0.5s ease; /* Плавна зміна */
+}
+
+.lang-ico .lang-hover {
+    opacity: 0; /* Приховане друге зображення за замовчуванням */
+}
+
+.lang-ico:hover .lang-hover {
+    opacity: 1; /* Робимо друге зображення видимим */
+}
+
+.lang-ico:hover .lang-default {
+    opacity: 0; /* Приховуємо перше зображення */
+}
+.rights{
+    color: #d2d2d2;
+    font-size: 13px;
+}
+
+.person{
+    margin-bottom: -15px;
+}
+.flex-person{
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+.profile-img{
+   width: 42px;
+   height: 42px;
+   margin-top: -10px;
+   border-radius:50%;
+   -webkit-box-shadow: 0px 0px 17px 5px rgba(10,140,15,0.75);
+   -moz-box-shadow: 0px 0px 17px 5px rgba(10,140,15,0.75);
+   box-shadow: 0px 0px 17px 5px rgba(10,140,15,0.75);
+   z-index:-1000;
+   border: 1px solid #0a8c0f;
+}
+.profile-names{
+    color: #169728;
+    font-weight: 550;
+    margin:0;
+}
+.profile-username{
+    margin-top: 5px;
+    margin-bottom: 0;
+    color: #e2e2e2;
+}
+.profile-email{
+    color: #7d7d7d;
+    font-size: 13px;
+}
+
+.line{
+    background: #edf0f7;
+    height: 1px;
+    margin: 6px 0;
+}
+.option-container{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.option-container img{
+    width:25px;
+}
+li a {
+    display: block;
+    height: fit-content;
+}
+.option-text{
+    margin:0;
+}
+.option{
+    background-color: transparent;
+    transition: 0.5s ease;
+    border-radius: 20px;
+}
+.option:hover{
+    background-color: #686868;
+}
+.is-verified-img{
+    position: absolute;
+    width: 24px;
+    top: 61px;
+    left: 38px;
+}
+
+.fa-text{
+    font-size:11.5px !important;
+}
+
+.fa-option{
+    background-color: #ffba0cc9;
+    margin:0 7px;
+}
+
+.uid{
+    font-size: 12px;
+    color: #00a902;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.uid-text{
+    font-size:12px;
+    color: #00a902;
+}
+
+.copy-btn{
+    background: transparent;
+    border: none;
+    color: white;
+}
+
+.search-container{
+    position: relative;
+    font-family: Roboto, "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei";
+    outline: none;
+    height: fit-content;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    -webkit-box-align: center;
+    align-items: center;
+    opacity: 1;
+    cursor: text;
+    padding: 0px 16px;
+    width: 150px;
+    border-radius: 20px;
+    background: rgb(255 255 255 / 12%);
+    gap: 7px;
+    color: #ffffff7d;
+}
+.search-input  {
+    border: none;
+    outline: none;
+    padding: 0px;
+    width: 100%;
+    flex: 1 1 0%;
+    margin: 0px;
+    box-sizing: border-box;
+    background: transparent;
+    -webkit-tap-highlight-color: transparent;
+    font-family: Roboto, "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei";
+    color: rgb(243, 243, 243);
+    cursor: text;
+    font-weight: 500;
+    font-size: 12px;
+    height: 32px;
+    line-height: 20px;
+
+}
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300%;
+    background: #1b1c1f;
+    border-radius: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    visibility: hidden;
+    z-index: 10;
+    max-height: 300px;
+    overflow-y: auto;
+    padding 10px;
+}
+
+.dropdown.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.dropdown ul {
+    list-style: none;
+    padding: 10px;
+}
+
+.dropdown li {
+    color: #ffffff;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-radius:20px;
+}
+
+.dropdown li:hover {
+    background: #272727;
+}
+
+.crypto-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+    background-color: #888; /* Default gray color */
+}
+#cryptoList hr{
+    color: #9c9c9c;
+    margin: 0;
+}
+
+
+.firstdiv{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+.chidlOneDiv{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.chidlTwoDiv{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.spanName{
+    background-color: transparent;
+}
+.spanSpot{
+    background-color: transparent;
+    font-size: 11px;
+    color: #919191;
+}
+.spanPrice{
+    background-color: transparent;
+}
+.spanChange{
+    background-color: transparent;
+    font-size: 12px;
+}
+.Cryptolink{
+    width: 100%;
+    text-decoration: none !important;
+    color: white;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  background: #1b1c1f;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #1b1c1f;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

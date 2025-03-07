@@ -1,0 +1,40 @@
+main{
+    background: #101014;
+}
+#interval-buttons{
+    position:absolute;
+    z-index:1000;
+    top:130px;
+    left:80px;
+}
+
+#interval-buttons button{
+    background:transparent;
+    border:none;
+    transition: 0.3s ease-in-out;
+}
+
+.pass-time-button{
+    color:#adb1b8;
+}
+.pass-time-button:hover{
+    color:white;
+}
+.active-time-button{
+    color:#adb1b8;
+    color: green;
+}
+.active-time-button:hover{
+    color:green;
+}
+
+.plot-container{
+    width: fit-content;
+}
+#chart{
+    width: fit-content;
+}
+.modebar{
+    top:70px !important;
+    opacity:1 !important;
+}
