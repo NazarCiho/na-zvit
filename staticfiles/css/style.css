@@ -23,6 +23,8 @@ footer {
 }
 footer{
     background-color:black;
+    position relative;
+    bottom:0
 }
 .navbar-brand{
     color: white;
@@ -35,7 +37,7 @@ footer{
     color: #11874a;
 }
 .register{
-    background-color: #11874a;
+    background-color: #0a8c0f;
     color: white;
     border: none;
     padding: 7px 15px;
@@ -43,7 +45,7 @@ footer{
     display: inline-block;
     font-size: 16px;
     cursor: pointer;
-    border-radius:13px;
+    border-radius:50px;
     margin-right:10px;
     transition: 0.3s ease;
 }

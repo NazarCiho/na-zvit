@@ -4,7 +4,6 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 
 
-# Create your models here.
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ("BUY", "Buy Cryptocurrency"),
@@ -21,10 +20,10 @@ class Transaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="transactions")
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
-    currency = models.CharField(max_length=10)  # Наприклад, BTC, ETH
-    amount = models.DecimalField(max_digits=15, decimal_places=8)  # Сума в криптовалюті
-    price_usd = models.DecimalField(max_digits=15, decimal_places=2)  # Ціна на момент угоди (в USD)
-    total_usd = models.DecimalField(max_digits=15, decimal_places=2)  # Загальна сума в USD
+    currency = models.CharField(max_length=10)  
+    amount = models.DecimalField(max_digits=15, decimal_places=8) 
+    price_usd = models.DecimalField(max_digits=15, decimal_places=2)  
+    total_usd = models.DecimalField(max_digits=15, decimal_places=2)  
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="PENDING")
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -36,7 +35,6 @@ class Transaction(models.Model):
     def execute_transaction(self):
         try:
             if self.transaction_type == "BUY":
-                # Перевіряємо чи достатньо USD
                 if self.wallet.balance_usd >= self.total_usd:
                     try:
                         self.wallet.subtract_usd(self.total_usd)
@@ -45,7 +43,6 @@ class Transaction(models.Model):
                         self.save()
                         return True
                     except Exception as e:
-                        # Якщо виникла помилка, відміняємо транзакцію
                         self.wallet.add_usd(self.total_usd)
                         self.status = "FAILED"
                         self.save()
@@ -54,8 +51,7 @@ class Transaction(models.Model):
                     self.status = "FAILED"
                     self.save()
                     raise ValueError("Insufficient USD balance")
-            else:  # SELL
-                # Перевіряємо чи достатньо криптовалюти
+            else:
                 crypto_balance = self.wallet.crypto_balances.get(self.currency, 0)
                 if Decimal(str(crypto_balance)) >= self.amount:
                     try:
@@ -65,7 +61,6 @@ class Transaction(models.Model):
                         self.save()
                         return True
                     except Exception as e:
-                        # Якщо виникла помилка, відміняємо транзакцію
                         self.wallet.subtract_usd(self.total_usd)
                         self.wallet.add_crypto(self.currency, self.amount)
                         self.status = "FAILED"

@@ -21,8 +21,7 @@ main{
     color:white;
 }
 .active-time-button{
-    color:#adb1b8;
-    color: green;
+    color:green;
 }
 .active-time-button:hover{
     color:green;
@@ -37,4 +36,752 @@ main{
 .modebar{
     top:70px !important;
     opacity:1 !important;
+}
+
+/* Нові стилі для торгівлі */
+.trading-page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    min-height: 100vh;
+    color: #fff;
+}
+
+.trading-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #101014;
+    border-radius: 12px;
+}
+
+.symbol-info h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.price-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.current-price {
+    text-align: center;
+    padding: 10px;
+    background: #2c3040;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.price-up {
+    color: #20b26c !important;
+}
+
+.price-down {
+    color: #ef454a !important;
+}
+
+.price-arrow {
+    font-size: 15px;
+    margin-left: 5px;
+    font-family: fantasy;
+}
+
+.price-change-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.price-change-percent {
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.price-change.positive {
+    color: #20b26c;
+}
+
+.price-change.negative {
+    color: #ef5350;
+}
+
+.trading-stats {
+    display: flex;
+    gap: 20px;
+}
+
+
+
+.main-content {
+    display: flex;
+    gap: 20px;
+}
+
+.chart-section {
+    flex: 1;
+    min-width: 0;
+    background: #101014;
+    border-radius: 12px;
+}
+
+.trading-section {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.wallet-balance {
+    background: #101014;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.balance-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.balance-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.balance-item.main-balance {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.trading-forms {
+    background: #101014;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.form-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: #808a9d;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab-button.active {
+    color: #fff;
+    border-bottom: 2px solid #1e88e5;
+}
+
+.trade-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    color: #808a9d;
+    font-size: 14px;
+}
+
+.form-group input {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #fff;
+}
+
+.trade-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.trade-button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.trade-button.buy {
+    background: #20b26c;
+    color: white;
+}
+
+.trade-button.sell {
+    background: #ef454a;
+    color: white;
+}
+
+.trade-button:hover {
+    filter: brightness(1.1);
+}
+
+/* Стилі для таблиць ордерів та транзакцій */
+.bottom-section {
+    background: #101014;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.section-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-tab {
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    color: #808a9d;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.section-tab.active {
+    color: #fff;
+    border-bottom: 2px solid #1e88e5;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table th {
+    color: #808a9d;
+    font-weight: normal;
+}
+
+.buy {
+    color: #20b26c;
+}
+
+.sell {
+    color: #ef5350;
+}
+
+.status-completed {
+    color: #20b26c;
+}
+
+.status-pending {
+    color: #f9a825;
+}
+
+.status-failed {
+    color: #ef5350;
+}
+
+.cancel-button {
+    padding: 6px 12px;
+    background: rgba(239, 83, 80, 0.1);
+    color: #ef5350;
+    border: 1px solid #ef5350;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.cancel-button:hover {
+    background: rgba(239, 83, 80, 0.2);
+}
+
+/* Стилі для TradingView віджета */
+.tradingview-widget-container {
+    margin: -21px -7px !important;
+    align-items: normal !important;
+    width: 100% !important;
+}
+
+#tradingview_chart {
+    margin: -20px 0 0 -1px !important;
+}
+
+/* Додаткові стилі для адаптивності */
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .trading-section {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .trading-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .trading-stats {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+.hr-line{
+    position: absolute;
+    top: 124px;
+    z-index: 1;
+    left: 17px;
+    width: 81%;
+    color: #000000;
+    border: 0;
+    border-top: 4px solid;
+    opacity: 1;
+}
+.hr-vertical{
+    position: absolute;
+    top: 50px;
+    z-index: 1;
+    left: 1251px;
+    width: 4px;
+    color: #000000;
+    border: 0;
+    border-top: 700px solid;
+    opacity: 1;
+}
+.price-stats-container {
+    display: flex;
+    gap: 8px;
+    padding: 10px 15px;
+    background: #101014;
+    border-radius: 8px;
+    min-width: 200px;
+    width: 173%;
+    margin-top: 10px;
+
+}
+
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.stat-item .label {
+    color: #808a9d;
+    font-size: 13px;
+}
+
+.stat-item .value {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#amount-slider, #limit-amount-slider {
+    padding: 0;
+}
+.trading-panel{
+    border-left: 5px solid black;
+    padding-left: 10px;
+    background: #101014;
+    z-index: 2;
+}
+
+.buy-sell-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    background: #1e222d;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.buy-sell-tabs .tab-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.buy-sell-tabs .tab-button.active {
+    background: #2c3040;
+}
+
+.buy-sell-tabs .buy-tab.active {
+    background: #20b26c;
+}
+
+.buy-sell-tabs .sell-tab.active {
+    background: #ef5350;
+}
+
+.trade-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: #20b26c;
+}
+
+.trade-button.sell-mode {
+    background: #ef5350;
+}
+
+.trade-slider {
+    width: 100%;
+    margin: 10px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background: #2c2c2c;
+    outline: none;
+    cursor: pointer;
+}
+
+.trade-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #20b26c;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.trade-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #20b26c;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.trade-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #2c2c2c;
+    border-radius: 5px;
+}
+
+.trade-slider::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #2c2c2c;
+    border-radius: 5px;
+}
+
+/* Активний стан повзунка */
+.trade-slider:active::-webkit-slider-thumb {
+    transform: scale(1.2);
+    background: #2196f3;
+}
+
+.trade-slider:active::-moz-range-thumb {
+    transform: scale(1.2);
+    background: #2196f3;
+}
+
+/* Стилі для повзунка при продажу */
+.sell-tab.active ~ form .trade-slider::-webkit-slider-thumb {
+    background: #ef5350;
+}
+
+.sell-tab.active ~ form .trade-slider::-moz-range-thumb {
+    background: #ef5350;
+}
+
+/* Стилі для контейнера повзунка */
+.slider-container {
+    position: relative;
+    margin: 20px 0;
+    padding: 0 10px;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.slider-labels span {
+    font-size: 12px;
+    color: #808a9d;
+    position: relative;
+}
+
+/* Стилі для книги ордерів */
+.order-book {
+    width: 320px;
+    background: #101014;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 0 -15px;
+    height: fit-content;
+    z-index: 1;
+    border-left: 5px solid black;
+}
+
+.order-book h3 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.order-book-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 8px 0;
+    border-bottom: 1px solid #2c3040;
+    font-size: 12px;
+    color: #808a9d;
+}
+
+.sell-orders, .buy-orders {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.order-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 4px 0;
+    font-size: 12px;
+    cursor: pointer;
+    text-align: right;
+}
+
+.order-row span:first-child {
+    text-align: left;
+}
+
+.sell-orders .order-row:hover {
+    background: rgba(239, 83, 80, 0.1);
+}
+
+.buy-orders .order-row:hover {
+    background: rgba(38, 166, 154, 0.1);
+}
+
+.sell-orders .order-row {
+    color: #ef454a;
+}
+
+.buy-orders .order-row {
+    color: #20b26c;
+}
+
+.current-price {
+    text-align: center;
+    padding: 10px;
+    background: #2c3040;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Стилі для скроллбару в книзі ордерів */
+.sell-orders::-webkit-scrollbar,
+.buy-orders::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sell-orders::-webkit-scrollbar-track,
+.buy-orders::-webkit-scrollbar-track {
+    background: #1e222d;
+}
+
+.sell-orders::-webkit-scrollbar-thumb,
+.buy-orders::-webkit-scrollbar-thumb {
+    background: #2c3040;
+    border-radius: 3px;
+}
+
+.sell-orders::-webkit-scrollbar-thumb:hover,
+.buy-orders::-webkit-scrollbar-thumb:hover {
+    background: #373b4d;
+}
+.slider-container {
+    position: relative;
+    margin: 20px 0;
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.slider-labels span {
+    font-size: 12px;
+    color: #666;
+}
+
+#amount-slider {
+    width: 100%;
+    margin: 10px 0;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    border-radius: 5px;
+    background: #2c2c2c;
+    outline: none;
+}
+
+#amount-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+#amount-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+#amount-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #2c2c2c;
+    border-radius: 5px;
+}
+
+#amount-slider::-moz-range-track {
+    width: 100%;
+    height: 10px;
+    cursor: pointer;
+    background: #2c2c2c;
+    border-radius: 5px;
+}
+
+.buy-sell-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    background: #1e222d;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.buy-sell-tabs .tab-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.buy-sell-tabs .tab-button.active {
+    background: #2c3040;
+}
+
+.buy-sell-tabs .buy-tab.active {
+    background: #20b26c;
+}
+
+.buy-sell-tabs .sell-tab.active {
+    background: #ef5350;
+}
+
+.trade-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.buy-tab.active ~ form .trade-button {
+    background: #20b26c;
+}
+
+.sell-tab.active ~ form .trade-button {
+    background: #ef5350;
+}
+.order-amount{
+    color: white;
+}
+.order-total{
+    color: white;
+    margin-right: 5px;
+}
+.order-price-buy{
+    color: #20b26c;
+}
+.SELL{
+    border-left: 5px solid #ef454a;
+}
+.BUY{
+    border-left: 5px solid #20b26c;
 }

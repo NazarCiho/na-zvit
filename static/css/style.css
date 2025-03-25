@@ -1,4 +1,3 @@
-
 body {
     display: flex;
     flex-direction: column;
@@ -23,7 +22,7 @@ footer {
 }
 footer{
     background-color:black;
-    position relative;
+    position: relative;
     bottom:0
 }
 .navbar-brand{
@@ -32,6 +31,8 @@ footer{
 .nav-link{
     color: white;
     max-height:40px;
+    gap: 5px;
+    display: flex;
 }
 .nav-link:hover{
     color: #11874a;
@@ -141,6 +142,7 @@ footer{
 .profile-ico,
 .profile-ico-hover {
     position: absolute;
+    margin:10px 5px;
     top: -5px;
     left: 0;
     width: 100%;
@@ -443,4 +445,422 @@ li a {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.dot-ico{
+    position: absolute;
+    top: 15px;
+    left: 197px;
+    background-color: #13864b;
+    border-radius: 50%;
+    border: 2px solid white;
+    height: 9px;
+    width: 9px;
+    /* font-size: 13px; */
+    padding-top: 0px;
+    flex-direction: column;
+    align-content: space-between;
+    justify-content: center;
+    animation: dot-ico-animation 1s infinite;
+}
+@keyframes dot-ico-animation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+}
+
+/* Стилі для футера */
+.footer {
+    background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+    color: #fff;
+    padding: 60px 0 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #11874a, transparent);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-main {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.footer-brand {
+    max-width: 300px;
+}
+
+.footer-logo {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+.footer-description {
+    color: #999;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+}
+
+.social-link {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: #11874a;
+    transform: translateY(-3px);
+    color: #fff;
+}
+
+.footer-section h5 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 12px;
+}
+
+.footer-section ul li a {
+    color: #999;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #11874a;
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-info {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-copyright, .footer-author {
+    color: #666;
+    font-size: 13px;
+    margin: 0;
+}
+
+.language-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.language-select:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Медіа-запити для адаптивності */
+@media (max-width: 768px) {
+    .footer-main {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .footer-brand {
+        grid-column: 1 / -1;
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-main {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .footer-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Додаємо стилі для блоку з цінами криптовалют */
+.crypto-prices {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.crypto-list {
+    margin: 0;
+}
+
+.crypto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.crypto-item:last-child {
+    border-bottom: none;
+}
+
+.crypto-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.crypto-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.crypto-icon {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+}
+.popular-crypto{
+    text-decoration: none;
+}
+.crypto-name {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.crypto-price-info {
+    text-align: right;
+}
+
+.crypto-price {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.crypto-change {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.crypto-change.positive {
+    color: #11874a;
+}
+
+.crypto-change.negative {
+    color: #ff4444;
+}
+
+/* Стилі для перемикача мов у хедері */
+.lang-ico {
+    position: relative;
+    cursor: pointer;
+}
+
+.lang-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    min-width: 160px;
+    z-index: 1000;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.lang-ico:hover .lang-dropdown {
+    display: block;
+}
+
+.lang-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.lang-item {
+    padding: 0;
+}
+
+.lang-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.lang-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lang-item.active .lang-button {
+    background: rgba(17, 135, 74, 0.2);
+    color: #11874a;
+}
+
+.lang-flag {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Стилі для мовних кнопок */
+.language-buttons {
+    display: flex;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px;
+    border-radius: 30px;
+    position: relative;
+    width: fit-content;
+}
+
+.lang-btn {
+    position: relative;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 25px;
+    background: black;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+/* Активна кнопка */
+.lang-btn.active {
+    color: #ffffff;
+    background: #11874a;
+}
+
+
+/* Зміщення індикатора для англійської мови */
+.language-buttons.en::before {
+    transform: translateX(calc(100% - 0px));
+}
+
+/* Ефект при наведенні */
+.lang-btn:hover:not(.active) {
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .language-buttons {
+        margin: 0 auto;
+    }
+}
+
+/* Стилі для гри */
+.game-section {
+    width: 300px;
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(17, 135, 74, 0.3);
+}
+
+#gameCanvas {
+    width: 100%;
+    height: 150px;
+    background: #1a1a2e;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+#gameCanvas:hover {
+    filter: brightness(1.1);
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: #888;
+    font-size: 14px;
+}
+
+.score, .high-score {
+    color: #11874a;
+    font-weight: 500;
 }

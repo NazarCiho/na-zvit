@@ -379,21 +379,18 @@ body {
 }
 
 .tab-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
     border: none;
-    background: transparent;
+    border-radius: 8px;
     color: #888;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
 
 .tab-btn.active {
-    background: rgba(0, 255, 136, 0.1);
-    color: #00ff88;
+    background: #2962ff;
+    color: white;
 }
 
 .tab-btn i {
@@ -575,69 +572,4 @@ tr td:last-child {
 
 .tab-content.active {
     display: block;
-}
-.hide-ico{
-    margin-bottom: 10px;
-}
-.balance-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.toggle-balance {
-    background: none;
-    border: none;
-    color: #888;
-    cursor: pointer;
-    padding: 5px;
-    transition: color 0.3s;
-}
-
-.toggle-balance:hover {
-    color: #fff;
-}
-
-.toggle-balance.hidden i {
-    color: #555;
-}
-
-.btc-equivalent {
-    color: #888;
-    font-size: 14px;
-    margin-top: 5px;
-}
-
-.balance-hidden {
-    font-family: monospace;
-    letter-spacing: 2px;
-}
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.tab-btn {
-    padding: 10px 20px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-}
-
-.tab-btn.active {
-    opacity: 1;
-    border-bottom: 2px solid #007bff;
-}
-
-.tab-btn:hover {
-    opacity: 1;
-} 
-option {
-    color: black;
 }

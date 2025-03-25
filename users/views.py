@@ -24,7 +24,6 @@ from io import BytesIO
 import base64, pyotp
 from .utils import upload_to_imgbb
 import requests
-from io import BytesIO
 from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 from qrcode.image.styles.colormasks import SolidFillColorMask
 from qrcode.image.styledpil import StyledPilImage
@@ -35,26 +34,24 @@ from qrcode.image.styles.colormasks import RadialGradiantColorMask
 
 
 def resend_confirmation_code(request):
-    # Отримуємо email із сесії
     email = request.session.get('pending_email')
     if not email:
-        return redirect('register')  # Якщо email відсутній, повертаємо на реєстрацію
+        return redirect('register') 
 
     try:
         confirmation = EmailConfirmation.objects.get(email=email)
-        confirmation.confirmation_code = str(random.randint(100000, 999999))  # Генеруємо новий код
+        confirmation.confirmation_code = str(random.randint(100000, 999999)) 
         confirmation.save()
 
-        # Надсилаємо новий код на email
         send_mail(
             'Confirmation Code',
             f'Your new confirmation code is: {confirmation.confirmation_code}',
             'bitsim.confirm@gmail.com',
             [email],
         )
-        return redirect('confirm_email')  # Повертаємося на сторінку підтвердження
+        return redirect('confirm_email') 
     except EmailConfirmation.DoesNotExist:
-        return redirect('register')  # Якщо запису немає, перенаправляємо
+        return redirect('register') 
 
 
 def send_confirmation_email(request):
@@ -64,21 +61,16 @@ def send_confirmation_email(request):
         if not created and confirmation.is_confirmed:
             return render(request, 'email_already_confirmed.html')
 
-        # Генеруємо новий 6-значний код
         confirmation.confirmation_code = str(random.randint(100000, 999999))
         confirmation.is_confirmed = False
         confirmation.save()
-
-        # Зберігаємо email у сесії
         request.session['pending_email'] = email
 
-        # Рендеримо HTML-шаблон
         html_content = render_to_string('users/email.html', {
             'confirmation_code': confirmation.confirmation_code,
             'email': confirmation.email
         })
 
-        # Створюємо HTML-повідомлення
         subject = 'Код підтвердження'
         from_email = 'bitsim.confirm@gmail.com'
         to_email = [email]
@@ -86,7 +78,6 @@ def send_confirmation_email(request):
         email_message = EmailMultiAlternatives(subject, '', from_email, to_email)
         email_message.attach_alternative(html_content, "text/html")
         email_message.send()
-
         return redirect('confirm_email')
     return render(request, 'users/login_register/register.html')
 
@@ -125,35 +116,31 @@ def complete_registration(request):
         last_name = request.POST.get('last_name')
         password = request.POST.get('password')
 
-        # Отримуємо підтверджений email із сесії
         email = request.session.get('confirmed_email')
         if not email:
-            return redirect('send_confirmation_email')  # Якщо email не підтверджений, повертаємо назад
+            return redirect('send_confirmation_email') 
 
-        # Перевірка унікальності username
         if User.objects.filter(username=username).exists():
             messages.error(request, "Цей username вже зайнятий. Будь ласка, оберіть інший.")
             return render(request, 'users/login_register/complete_registration.html', {
-                'username': username,  # Повертаємо введені дані
+                'username': username,
                 'first_name': first_name,
                 'last_name': last_name,
             })
 
-        # Створення нового користувача
         user = User.objects.create_user(
             username=username,
-            email=email,  # Використовуємо підтверджений email
+            email=email, 
             first_name=first_name,
             last_name=last_name,
             password=password,
         )
         user.backend = 'django.contrib.auth.backends.ModelBackend'
 
-        # Очищуємо сесію
         del request.session['confirmed_email']
 
-        login(request, user)  # Автоматичний вхід після реєстрації
-        return redirect('profile')  # Перенаправлення на головну сторінку
+        login(request, user)  
+        return redirect('profile') 
 
     return render(request, 'users/login_register/complete_registration.html')
 def profile_update_required(user):
@@ -167,8 +154,8 @@ def post_login_redirect(request):
     Перевірка після логіну: якщо дані профілю н■е заповнені, перенаправити користувача.
     """
     if profile_update_required(request.user):
-        return redirect('update_profile')  # Назва URL для сторінки оновлення профілю
-    return redirect('homepage')  # Назва URL для домашньої сторінки
+        return redirect('update_profile')  
+    return redirect('homepage')
 
 
 @login_required
@@ -180,7 +167,7 @@ def update_profile(request):
         form = UpdateProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('homepage')  # Перенаправлення після успішного оновлення
+            return redirect('homepage')
     else:
         form = UpdateProfileForm(instance=request.user)
 
@@ -193,13 +180,10 @@ def user_login(request):
             user_profile = UserProfile.objects.get(user=user)
 
             if user_profile.is_2fa_authenticated:
-                # Збереження користувача у сесії до підтвердження 2FA
                 request.session['pre_authenticated_user_id'] = user.id
                 print(request.session.get('pre_authenticated_user_id'))
-
                 return redirect('verify_2fa')
 
-            # Якщо 2FA не ввімкнена, логіньте одразу
             login(request, user)
             return redirect('profile')
     else:
@@ -219,9 +203,7 @@ def verify_2fa(request):
         code = request.POST.get('2fa_code')
 
         if totp.verify(code):
-            # Отримуємо бекенд, який використовувався для автентифікації
             backend = user.backend if hasattr(user, 'backend') else 'django.contrib.auth.backends.ModelBackend'
-            # Логін після успішної перевірки
             login(request, user, backend=backend)
             del request.session['pre_authenticated_user_id']
             return redirect('profile')
@@ -250,14 +232,12 @@ def user_profile(request):
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, request.FILES, instance=user_profile)
         if form.is_valid():
-            # Отримуємо зображення з форми
             profile_picture = request.FILES.get('profile_picture')
 
             if profile_picture:
                 try:
-                    # Завантажуємо зображення на imgbb і отримуємо URL
                     image_url = upload_to_imgbb(profile_picture)
-                    user_profile.profile_picture = image_url  # Оновлюємо поле зображення
+                    user_profile.profile_picture = image_url 
                     user_profile.save()
                     messages.success(request, "Ваше фото профілю оновлено!")
                 except Exception as e:
@@ -265,9 +245,9 @@ def user_profile(request):
             else:
                 messages.error(request, "Будь ласка, виберіть файл для завантаження.")
 
-            return redirect('profile')  # Перенаправлення на ту ж сторінку
+            return redirect('profile') 
         else:
-            messages.error(request, "Сталася помилка під час оновлення фото.")
+            messages.error(request, "Сталася помилка під час оновлення фото.",request.FILES)
     else:
         form = ProfileUpdateForm(instance=user_profile)
 
@@ -282,16 +262,12 @@ def user_profile(request):
 @login_required
 def two_factor_setup(request):
     user_profile = get_object_or_404(UserProfile, user=request.user)
-
-    # Генеруємо секрет, якщо його ще немає
     if not user_profile.totp_secret:
         user_profile.generate_totp_secret()
 
-    # Генеруємо URI для QR-коду
     totp = pyotp.TOTP(user_profile.totp_secret)
     qr_uri = totp.provisioning_uri(request.user.username, issuer_name="BitSim")
 
-    # Кастомізація QR-коду
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_Q,
@@ -301,25 +277,21 @@ def two_factor_setup(request):
     qr.add_data(qr_uri)
     qr.make(fit=True)
 
-    # Налаштування кольорів QR-коду
     img = qr.make_image(
         image_factory=StyledPilImage,
         module_drawer=RoundedModuleDrawer(),
         color_mask=RadialGradiantColorMask(center_color=(10, 140, 15), edge_color=(0, 0, 0)),
     )
 
-    # URL-адреса логотипу
-    logo_url = "https://i.ibb.co/t84hck7/a-modern-illustration-of-a-green-dollar-bso2h-Z2f-Tf-Ggs5-Bbf-OLBQ-CZCdl-B9x-Sp-ONKltnvko-MIg-remove.png"  # Замініть на посилання до вашого логотипу
+    logo_url = "https://i.ibb.co/t84hck7/a-modern-illustration-of-a-green-dollar-bso2h-Z2f-Tf-Ggs5-Bbf-OLBQ-CZCdl-B9x-Sp-ONKltnvko-MIg-remove.png" 
     try:
         response = requests.get(logo_url)
-        response.raise_for_status()  # Перевірка, чи успішно завантажено зображення
+        response.raise_for_status() 
         logo = Image.open(BytesIO(response.content))
 
-        # Масштабування логотипу
-        logo_size = (img.size[0] // 1, img.size[1] // 4)  # 25% від розміру QR
+        logo_size = (img.size[0] // 1, img.size[1] // 4) 
         logo.thumbnail(logo_size)
 
-        # Вставка логотипу в центр QR-коду
         img_center = (
             (img.size[0] - logo.size[0]) // 2,
             (img.size[1] - logo.size[1]) // 2,
@@ -328,7 +300,6 @@ def two_factor_setup(request):
     except requests.RequestException as e:
         print(f"Помилка завантаження логотипу: {e}")
 
-    # Конвертація зображення в base64
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     buffer.seek(0)
@@ -354,13 +325,8 @@ def two_factor_setup(request):
 def delete_account(request):
     user = request.user
 
-    # Видаляємо підтверджену пошту, якщо вона є
     EmailConfirmation.objects.filter(email=user.email).delete()
-
-    # Видаляємо користувача
     user.delete()
-
-    # Видаляємо сесію
     request.session.flush()
 
     return JsonResponse({'message': 'Акаунт успішно видалено'}, status=200)

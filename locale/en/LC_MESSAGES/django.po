@@ -1,0 +1,127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-20 14:21+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\mysite\settings.py:173
+msgid "Ukrainian"
+msgstr "Ukrainian"
+
+#: .\mysite\settings.py:174 .\templates\base.html:252
+msgid "English"
+msgstr "English"
+
+#: .\templates\base.html:36
+msgid "Пошук"
+msgstr "Search"
+
+#: .\templates\base.html:43
+msgid "Ваш гаманець"
+msgstr "Your wallet"
+
+#: .\templates\base.html:46 .\templates\base.html:179
+msgid "Профіль"
+msgstr "Profile"
+
+#: .\templates\base.html:57
+msgid "Акаунт"
+msgstr "Account"
+
+#: .\templates\base.html:92
+msgid ""
+"Рекомендуємо увімкнути двофакторну автентифікацію для додаткового захисту."
+msgstr ""
+
+#: .\templates\base.html:102 .\templates\base.html:180
+msgid "Гаманець"
+msgstr "Wallet"
+
+#: .\templates\base.html:110
+msgid "Налаштування профілю"
+msgstr "Profile settings"
+
+#: .\templates\base.html:118
+msgid "Вихід"
+msgstr "Logout"
+
+#: .\templates\base.html:126
+msgid "Увійти"
+msgstr "Login"
+
+#: .\templates\base.html:129
+msgid "Зареєструватися"
+msgstr "Register"
+
+#: .\templates\base.html:165
+msgid ""
+"Інноваційна платформа для торгівлі криптовалютою з передовими технологіями "
+"та найвищим рівнем безпеки"
+msgstr ""
+"Innovative cryptocurrency trading platform with advanced technologies and "
+"the highest level of security"
+
+#: .\templates\base.html:176
+msgid "Посилання"
+msgstr "Links"
+
+#: .\templates\base.html:178
+msgid "Головна"
+msgstr "Home"
+
+#: .\templates\base.html:181
+msgid "Трейдинг"
+msgstr "Trading"
+
+#: .\templates\base.html:187
+msgid "Про нас"
+msgstr "About us"
+
+#: .\templates\base.html:189
+msgid "Підтримка 24/7"
+msgstr "24/7 Support"
+
+#: .\templates\base.html:190
+msgid "API"
+msgstr "API"
+
+#: .\templates\base.html:191
+msgid "Безпека"
+msgstr "Security"
+
+#: .\templates\base.html:192
+msgid "Верифікація"
+msgstr "Verification"
+
+#: .\templates\base.html:198
+msgid "Поточні ціни"
+msgstr "Current prices"
+
+#: .\templates\base.html:243
+msgid "Всі права захищено"
+msgstr "All rights reserved"
+
+#: .\templates\base.html:244
+msgid "Створено"
+msgstr "Created by"
+
+#: .\templates\base.html:249
+msgid "Українська"
+msgstr "Ukrainian"
+
+#~ msgid "Спот"
+#~ msgstr "Spot"

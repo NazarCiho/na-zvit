@@ -18,7 +18,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 
-SUPPORTED_CURRENCIES = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT']  # і т.д.
+SUPPORTED_CURRENCIES = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT'] 
 
 class CurrentPriceService:
     @staticmethod
@@ -47,10 +47,8 @@ class CurrencyView(View):
         
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return self._handle_market_order(request, wallet, symbol)
-        
         if 'limit_order' in request.POST:
             return self._handle_limit_order(request, wallet, symbol)
-            
         return redirect('currency_view', symbol=symbol)
     
     def _get_context(self, wallet, symbol):
@@ -63,7 +61,6 @@ class CurrencyView(View):
             wallet=wallet
         ).order_by('-timestamp')[:10]
 
-        # Отримуємо баланс криптовалюти
         crypto_balance = wallet.crypto_balances.get(symbol, 0) if wallet.crypto_balances else 0
         
         return {
@@ -73,18 +70,15 @@ class CurrencyView(View):
             'limit_form': LimitOrderForm(),
             'active_orders': active_orders,
             'recent_transactions': recent_transactions,
-            'crypto_balance': crypto_balance,  # Додаємо баланс криптовалюти до контексту
+            'crypto_balance': crypto_balance, 
         }
     
     def _handle_market_order(self, request, wallet, symbol):
         try:
             amount = Decimal(request.POST.get('amount'))
             transaction_type = request.POST.get('transaction_type')
-            
             if amount <= 0:
                 raise ValueError("Amount must be greater than 0")
-
-            # Створюємо транзакцію
             transaction = Transaction(
                 user=request.user,
                 wallet=wallet,
@@ -94,19 +88,16 @@ class CurrencyView(View):
                 price_usd=CurrentPriceService.get_current_price(symbol)
             )
             
-            # Розраховуємо total_usd
             transaction.total_usd = transaction.amount * transaction.price_usd
             
-            # Перевіряємо баланс перед збереженням
             if transaction_type == 'BUY':
                 if wallet.balance_usd < transaction.total_usd:
                     raise ValueError("Insufficient USD balance")
-            else:  # SELL
+            else: 
                 crypto_balance = wallet.crypto_balances.get(symbol, 0)
                 if Decimal(str(crypto_balance)) < amount:
                     raise ValueError(f"Insufficient {symbol} balance")
             
-            # Зберігаємо та виконуємо транзакцію
             transaction.save()
             if transaction.execute_transaction():
                 return JsonResponse({
@@ -143,8 +134,21 @@ class WalletView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['wallets'] = Wallet.objects.filter(user=self.request.user)
-        context['transactions'] = Transaction.objects.filter(user=self.request.user).order_by('-timestamp')
+        wallet = self.request.user.wallet
+        prices = {}
+        if wallet.crypto_balances:
+            try:
+                for currency in wallet.crypto_balances.keys():
+                    response = requests.get(f'https://api.binance.com/api/v3/ticker/price?symbol={currency}USDT')
+                    if response.ok:
+                        prices[currency] = float(response.json()['price'])
+            except Exception as e:
+                print(f"Error fetching prices: {e}")
+
+        context['wallet'] = wallet
+        context['prices'] = prices
+        context['transactions'] = Transaction.objects.filter(wallet=wallet).order_by('-timestamp')
+        context['orders'] = Order.objects.filter(wallet=wallet).order_by('-created_at')
         return context
 
 @method_decorator(login_required, name='dispatch')
@@ -222,7 +226,6 @@ class TradingView(View):
             if amount <= 0:
                 raise ValueError("Amount must be greater than 0")
 
-            # Створюємо транзакцію
             transaction = Transaction(
                 user=request.user,
                 wallet=wallet,
@@ -232,19 +235,16 @@ class TradingView(View):
                 price_usd=CurrentPriceService.get_current_price(symbol)
             )
             
-            # Розраховуємо total_usd
             transaction.total_usd = transaction.amount * transaction.price_usd
             
-            # Перевіряємо баланс перед збереженням
             if transaction_type == 'BUY':
                 if wallet.balance_usd < transaction.total_usd:
                     raise ValueError("Insufficient USD balance")
-            else:  # SELL
+            else: 
                 crypto_balance = wallet.crypto_balances.get(symbol, 0)
                 if Decimal(str(crypto_balance)) < amount:
                     raise ValueError(f"Insufficient {symbol} balance")
             
-            # Зберігаємо та виконуємо транзакцію
             transaction.save()
             if transaction.execute_transaction():
                 return JsonResponse({
@@ -300,4 +300,3 @@ class TradingPairsService:
             return SUPPORTED_CURRENCIES
 
 
-#done

@@ -12,9 +12,9 @@ class UserProfile(models.Model):
     totp_secret = models.CharField(max_length=32, blank=True, null=True)
     is_2fa_authenticated = models.BooleanField(default=False)
     profile_picture = models.URLField(blank=True, default='https://i.ibb.co/xqNGxfX/default.png')
-    custom_id = models.CharField(max_length=8, unique=True, blank=True, null=True)  # нове поле для ID
-    phone_number = PhoneNumberField(blank=True, null=True)  # Додаємо поле для номера телефонуpip install django-phonenumber-field
-    country = models.CharField(max_length=120, blank=True, null=True)  # Поле для країни
+    custom_id = models.CharField(max_length=8, unique=True, blank=True, null=True) 
+    phone_number = PhoneNumberField(blank=True, null=True)  
+    country = models.CharField(max_length=120, blank=True, null=True)
 
 
     def generate_totp_secret(self):
@@ -27,7 +27,7 @@ class UserProfile(models.Model):
 
     def generate_custom_id(self):
         """Метод для генерування випадкового 8-значного ID"""
-        self.custom_id = str(random.randint(10000000, 99999999))  # генеруємо випадкове число з восьми цифр
+        self.custom_id = str(random.randint(10000000, 99999999)) 
         self.save()
 
 class EmailConfirmation(models.Model):
@@ -43,7 +43,7 @@ class EmailConfirmation(models.Model):
 class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="wallet")
     balance_usd = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
-    crypto_balances = models.JSONField(default=dict, null=True)
+    crypto_balances = models.JSONField(default=dict)
 
     def add_usd(self, amount):
         if amount <= 0:
@@ -94,17 +94,17 @@ class Wallet(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         profile = UserProfile.objects.create(user=instance)
-        profile.generate_custom_id()  # Генеруємо custom_id після створення профілю
+        profile.generate_custom_id() 
         profile.save()
 
 
 @receiver(post_save, sender=UserProfile)
 def upload_profile_picture(sender, instance, **kwargs):
     if instance.profile_picture and not instance.profile_picture.startswith("http"):
-        api_key = "620b20cce0b56095360ae5f1c0d6d289"  # замініть на ваш API ключ
+        api_key = "620b20cce0b56095360ae5f1c0d6d289"  
         try:
             image_url = upload_to_imgbb(instance.profile_picture.path, api_key)
-            instance.profile_picture = image_url  # Оновлюємо поле URL
+            instance.profile_picture = image_url  
             instance.save()
         except Exception as e:
             print(f"Failed to upload image: {e}")

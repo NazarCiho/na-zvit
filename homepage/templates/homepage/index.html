@@ -6,40 +6,273 @@
 <link rel="stylesheet" href="{% static 'homepage/styles/homepage.css' %}">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-<img class="coin1 coin" src="https://kuna.io/_next/static/media/coin1.526104f5.webp" alt="">
-<img class="coin2 coin" src="https://kuna.io/_next/static/media/coin2.17f3cff5.webp" alt="">
-<img class="coin3 coin" src="https://kuna.io/_next/static/media/coin3.a0d20442.webp" alt="">
-<img class="coin4 coin" src="https://kuna.io/_next/static/media/coin4.93b3bd1b.webp" alt="">
-
+<!-- Animated background coins -->
+<div class="animated-background">
+    <img class="coin1 coin" src="https://kuna.io/_next/static/media/coin1.526104f5.webp" alt="">
+    <img class="coin2 coin" src="https://kuna.io/_next/static/media/coin2.17f3cff5.webp" alt="">
+    <img class="coin3 coin" src="https://kuna.io/_next/static/media/coin3.a0d20442.webp" alt="">
+    <img class="coin4 coin" src="https://kuna.io/_next/static/media/coin4.93b3bd1b.webp" alt="">
+</div>
 
 {% if user.is_authenticated %}
-    {% if is_2fa_authenticated %}
-        <p>Ви успішно налаштували двофакторну автентифікацію.</p>
-    {% else %}
-        <p>Рекомендуємо увімкнути двофакторну автентифікацію для додаткового захисту.</p>
-        <a href="{% url 'two_factor_setup' %}" class="btn btn-primary">Налаштувати 2FA</a>
-    {% endif %}
-{% else %}
-    <div class="flex-start-container">
-        <div class="right-start-container">
-            <p class="site-title">Ласкаво просимо до BitSim – <br>вашої навчальної крипто-біржі!</p>
-            <p class="site-subTitle">Почніть тренуватися сьогодні та станьте <br>справжнім професіоналом у світі криптовалют!</p>
-            <a class="try-now" href="{% url 'register' %}">Спробувати зараз <i class="bi bi-arrow-right"></i></a>
+    <div class="dashboard-container">
+        <!-- 2FA Status Section -->
+        <div class="welcome-section">
+            {% if is_2fa_authenticated %}
+                <div class="security-status success">
+                    <i class="bi bi-shield-check"></i>
+                    <div class="status-content">
+                        <h3>Ваш акаунт захищено</h3>
+                        <p>2FA активовано. Ви можете безпечно торгувати.</p>
+                        <a href="{% url 'trade:spot' 'BTCUSDT' %}" class="btn-start-trading">
+                            Почати торгівлю <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="security-status warning">
+                    <i class="bi bi-shield-exclamation"></i>
+                    <div class="status-content">
+                        <h3>Увімкніть двофакторну автентифікацію</h3>
+                        <p>Для безпечної торгівлі рекомендуємо налаштувати 2FA</p>
+                        <a href="{% url 'two_factor_setup' %}" class="btn-setup-2fa">
+                            Налаштувати 2FA <i class="bi bi-shield-lock"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        <div class="left-start-container">
-            <p>шось</p>
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="left-content">
+                    <h1 class="site-title">Ласкаво просимо, {{ user.username }}!</h1>
+                    <p class="site-subtitle">Почніть свою подорож у світі криптотрейдингу прямо зараз</p>
+                </div>
+                <div class="right-content">
+                    <div class="live-market-preview">
+                        <div class="market-header">
+                            <h3>Поточні ціни</h3>
+                            <span class="live-indicator">Live</span>
+                        </div>
+                        <div class="price-ticker">
+                            <div class="ticker-item">                                
+                                <a href="https://bitsim.com:8000/trade/spot/BTCUSDT">
+                                    <img src="https://i.ibb.co/s96hKmW9/Bitcoin-svg.png" alt="Bitcoin">
+                                </a>
+                                <div class="ticker-info">
+                                    <span class="pair">BTC/USDT</span>
+                                    <div class="price-info">
+                                        <span class="btc-price price">Loading...</span>
+                                        <span class="btc-change change">...</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ticker-item"> 
+                                <a href="https://bitsim.com:8000/trade/spot/ETHUSDT">
+                                    <img src="https://i.ibb.co/gbM7yS4f/Cjdowner-Cryptocurrency-Flat-Ethereum-ETH-1024.png" alt="Ethereum">
+                                </a>
+                                <div class="ticker-info">
+                                    <span class="pair">ETH/USDT</span>
+                                    <div class="price-info">
+                                        <span class="eth-price price">Loading...</span>
+                                        <span class="eth-change change">...</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section {% if not is_2fa_authenticated %}locked{% endif %}">
+            <h2 class="section-title">Чому обирають BitSim?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="bi bi-shield-check"></i>
+                    <h3>Безпечне навчання</h3>
+                    <p>Тренуйтесь без ризику втрати реальних коштів</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-graph-up"></i>
+                    <h3>Реальні дані</h3>
+                    <p>Торгуйте з актуальними цінами криптовалют</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-book"></i>
+                    <h3>Навчальні матеріали</h3>
+                    <p>Отримайте доступ до покрокових інструкцій</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-gear"></i>
+                    <h3>Професійні інструменти</h3>
+                    <p>Використовуйте професійні інструменти</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trading Tools Section -->
+        <div class="tools-section {% if not is_2fa_authenticated %}locked{% endif %}">
+            <h2 class="section-title">Професійні інструменти</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3>Технічний аналіз</h3>
+                    <p>Професійні графіки TradingView</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3>Історія торгів</h3>
+                    <p>Відстежуйте свої успіхи</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h3>Віртуальний гаманець</h3>
+                    <p>Керуйте своїм портфоліо</p>
+                </div>
+            </div>
         </div>
     </div>
+{% else %}
+    <div class="landing-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="hero-content">
+                <div class="left-content">
+                    <h1 class="site-title">Почніть свій шлях <br>у світі криптовалют</h1>
+                    <p class="site-subtitle">BitSim - це безпечний спосіб навчитися торгувати криптовалютами без ризику втрати реальних коштів</p>
+                    <div class="cta-buttons">
+                        <a class="btn-primary pulse" href="{% url 'register' %}">
+                            Спробувати безкоштовно <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a class="btn-secondary" href="{% url 'login' %}">
+                            Увійти в акаунт <i class="bi bi-box-arrow-in-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="right-content">
+                    <div class="live-market-preview">
+                        <div class="market-header">
+                            <h3>Поточні ціни</h3>
+                            <span class="live-indicator">Live</span>
+                        </div>
+                        <div class="price-ticker">
+                            <div class="ticker-item">
+                                <a href="https://bitsim.com:8000/trade/spot/BTCUSDT">
+                                    <img src="https://i.ibb.co/s96hKmW9/Bitcoin-svg.png" alt="Bitcoin">
+                                </a>
+                                <div class="ticker-info">
+                                    <span class="pair">BTC/USDT</span>
+                                    <div class="price-info">
+                                        <span class="btc-price price">Loading...</span>
+                                        <span class="btc-change change">...</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ticker-item">
+                                <a href="https://bitsim.com:8000/trade/spot/ETHUSDT">
+                                    <img src="https://i.ibb.co/gbM7yS4f/Cjdowner-Cryptocurrency-Flat-Ethereum-ETH-1024.png" alt="Ethereum">
+                                </a>
+                                <div class="ticker-info">
+                                    <span class="pair">ETH/USDT</span>
+                                    <div class="price-info">
+                                        <span class="eth-price price">Loading...</span>
+                                        <span class="eth-change change">...</span>
+                                        <i class="bi bi-arrow-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Features Section -->
+        <div class="features-section">
+            <h2 class="section-title">Чому обирають BitSim?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="bi bi-shield-check"></i>
+                    <h3>Безпечне навчання</h3>
+                    <p>Тренуйтесь без ризику втрати реальних коштів на віртуальному балансі</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-graph-up"></i>
+                    <h3>Реальні дані</h3>
+                    <p>Торгуйте з актуальними цінами криптовалют у реальному часі</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-book"></i>
+                    <h3>Навчальні матеріали</h3>
+                    <p>Отримайте доступ до покрокових інструкцій та навчальних статей</p>
+                </div>
+                <div class="feature-card">
+                    <i class="bi bi-gear"></i>
+                    <h3>Професійні інструменти</h3>
+                    <p>Використовуйте ті ж інструменти, що й професійні трейдери</p>
+                </div>
+            </div>
+        </div>
 
+        <!-- Trading Tools Section -->
+        <div class="tools-section">
+            <h2 class="section-title">Професійні інструменти</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <h3>Технічний аналіз</h3>
+                    <p>Професійні графіки TradingView</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3>Історія торгів</h3>
+                    <p>Відстежуйте свої успіхи</p>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <h3>Віртуальний гаманець</h3>
+                    <p>Керуйте своїм портфоліо</p>
+                </div>
+            </div>
+        </div>
 
-
-
-
+        <!-- Start Trading Section -->
+        <div class="start-trading-section">
+            <div class="start-trading-content">
+                <h2>Готові почати свій шлях у трейдингу?</h2>
+                <p>Приєднуйтесь до спільноти трейдерів BitSim вже сьогодні</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'register' %}" class="btn-primary">
+                        Створити акаунт <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="#features" class="btn-secondary">
+                        Дізнатись більше <i class="bi bi-info-circle"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endif %}
 
-<br>
-<a href="{% url 'login' %}">Вхід</a>
-<br>
-<a href="https://bitsim.com:8000/trade/spot/BTCUSDT/">BTC/USDT</a>
+<!-- Додайте цей скрипт перед закриваючим тегом body -->
+<script src="{% static 'homepage/js/crypto-prices.js' %}"></script>
 {% endblock %}

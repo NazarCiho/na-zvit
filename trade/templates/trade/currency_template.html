@@ -8,117 +8,7 @@
     <link rel="stylesheet" href="{% static 'trade/styles/trade_Page.css' %}">
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        .slider-container {
-            position: relative;
-            margin: 20px 0;
-        }
-
-        .slider-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-        }
-
-        .slider-labels span {
-            font-size: 12px;
-            color: #666;
-        }
-
-        #amount-slider {
-            width: 100%;
-            margin: 10px 0;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 10px;
-            border-radius: 5px;
-            background: #2c2c2c;
-            outline: none;
-        }
-
-        #amount-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-
-        #amount-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #4CAF50;
-            cursor: pointer;
-        }
-
-        #amount-slider::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 10px;
-            cursor: pointer;
-            background: #2c2c2c;
-            border-radius: 5px;
-        }
-
-        #amount-slider::-moz-range-track {
-            width: 100%;
-            height: 10px;
-            cursor: pointer;
-            background: #2c2c2c;
-            border-radius: 5px;
-        }
-
-        .buy-sell-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: #1e222d;
-            border-radius: 4px;
-            padding: 4px;
-        }
-
-        .buy-sell-tabs .tab-button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .buy-sell-tabs .tab-button.active {
-            background: #2c3040;
-        }
-
-        .buy-sell-tabs .buy-tab.active {
-            background: #26a69a;
-        }
-
-        .buy-sell-tabs .sell-tab.active {
-            background: #ef5350;
-        }
-
-        .trade-button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .buy-tab.active ~ form .trade-button {
-            background: #26a69a;
-        }
-
-        .sell-tab.active ~ form .trade-button {
-            background: #ef5350;
-        }
+        
     </style>
 {% endblock %}
 
@@ -162,7 +52,7 @@
             <script type="text/javascript">
                 new TradingView.widget({
                     "container_id": "tradingview_chart",
-                    "width": "80%",
+                    "width": "100%",
                     "height": "600",
                     "symbol": "{{ symbol }}",
                     "interval": "1",
@@ -182,7 +72,42 @@
                 });
             </script>
         </div>
-        <hr class="hr-vertical">
+        
+        <!-- Книга ордерів -->
+        <div class="order-book">
+            <h3>Книга ордерів</h3>
+            <div class="order-book-container">
+                <div class="sell-orders">
+                    <div class="order-header">
+                        <span>Ціна (USDT)</span>
+                        <span>Кількість ({{ symbol }})</span>
+                        <span>Всього</span>
+                    </div>
+                    <div id="sell-orders-list">
+                        <!-- Сюди будуть додаватися ордери на продаж -->
+                    </div>
+                </div>
+                
+                <div class="current-price">
+                    <div class="price-change-container">
+                        <span class="price-arrow"></span>
+                        <span id="book-current-price">0.00</span>
+                        <span class="price-change-percent"></span>
+                    </div>
+                </div>
+                
+                <div class="buy-orders">
+                    <div class="order-header">
+                        <span>Ціна (USDT)</span>
+                        <span>Кількість ({{ symbol }})</span>
+                        <span>Всього</span>
+                    </div>
+                    <div id="buy-orders-list">
+                        <!-- Сюди будуть додаватися ордери на купівлю -->
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Права частина - торгівля -->
         <div class="trading-panel">
             <!-- Баланс -->
@@ -347,7 +272,7 @@
                 <tbody>
                     {% for tx in recent_transactions %}
                     <tr>
-                        <td>{{ tx.timestamp|date:"Y-m-d H:i" }}</td>
+                        <td class="{{ tx.transaction_type|upper }}">{{ tx.timestamp|date:"Y-m-d H:i" }}</td>
                         <td>{{ tx.currency }}</td>
                         <td class="{{ tx.transaction_type|lower }}">{{ tx.transaction_type }}</td>
                         <td>${{ tx.price_usd|floatformat:2 }}</td>
@@ -518,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (price > 0) {
             if (transactionType === 'BUY') {
                 // Для купівлі використовуємо USD
-                const usdAmount = (walletBalance * percentage) / 25;
+                const usdAmount = (walletBalance * percentage) / 25 / 4;
                 const cryptoAmount = usdAmount / price;
                 
                 if (isMarketOrder) {
@@ -634,6 +559,113 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Помилка при виконанні операції: ' + error.message);
         }
     });
+
+    let lastPrice = 0;
+
+    // Функція для отримання даних книги ордерів
+    async function fetchOrderBook(symbol) {
+        try {
+            const response = await fetch(`https://api.binance.com/api/v3/depth?symbol=${symbol}&limit=10`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching order book:', error);
+            return null;
+        }
+    }
+
+    // Функція для оновлення відображення книги ордерів
+    function updateOrderBook(orderBook) {
+        const sellOrdersList = document.getElementById('sell-orders-list');
+        const buyOrdersList = document.getElementById('buy-orders-list');
+        const currentPrice = document.getElementById('book-current-price');
+        const priceArrow = document.querySelector('.price-arrow');
+        const priceChangePercent = document.querySelector('.price-change-percent');
+        const priceContainer = document.querySelector('.price-change-container');
+        
+        if (!sellOrdersList || !buyOrdersList || !currentPrice) {
+            console.error('Order book elements not found');
+            return;
+        }
+        
+        // Очищаємо попередні дані
+        sellOrdersList.innerHTML = '';
+        buyOrdersList.innerHTML = '';
+        
+        // Отримуємо поточну ціну
+        const currentPriceValue = parseFloat(orderBook.bids[0][0]);
+        
+        // Розраховуємо зміну ціни
+        if (lastPrice > 0) {
+            const priceChange = currentPriceValue - lastPrice;
+            const changePercent = (priceChange / lastPrice) * 100;
+            
+            // Оновлюємо відображення ціни та стрілки
+            if (priceChange > 0) {
+                priceContainer.className = 'price-change-container price-up';
+                priceArrow.innerHTML = '↑';
+                priceChangePercent.textContent = `+${changePercent.toFixed(2)}%`;
+            } else if (priceChange < 0) {
+                priceContainer.className = 'price-change-container price-down';
+                priceArrow.innerHTML = '↓';
+                priceChangePercent.textContent = `${changePercent.toFixed(2)}%`;
+            }
+        }
+        
+        // Зберігаємо поточну ціну для наступного порівняння
+        lastPrice = currentPriceValue;
+        
+        // Оновлюємо відображення ціни
+        currentPrice.textContent = currentPriceValue.toFixed(2);
+        
+        // Оновлюємо ордери на продаж (в зворотньому порядку)
+        orderBook.asks.slice().reverse().forEach(ask => {
+            const [price, amount] = ask;
+            const total = (parseFloat(price) * parseFloat(amount)).toFixed(2);
+            sellOrdersList.innerHTML += `
+                <div class="order-row">
+                    <span class="order-price">${parseFloat(price).toFixed(2)}</span>
+                    <span class="order-amount">${parseFloat(amount).toFixed(8)}</span>
+                    <span class="order-total">${total}</span>
+                </div>
+            `;
+        });
+        
+        // Оновлюємо ордери на купівлю
+        orderBook.bids.forEach(bid => {
+            const [price, amount] = bid;
+            const total = (parseFloat(price) * parseFloat(amount)).toFixed(2);
+            buyOrdersList.innerHTML += `
+                <div class="order-row">
+                    <span class="order-price-buy">${parseFloat(price).toFixed(2)}</span>
+                    <span class="order-amount">${parseFloat(amount).toFixed(8)}</span>
+                    <span class="order-total">${total}</span>
+                </div>
+            `;
+        });
+    }
+
+    // Запускаємо оновлення книги ордерів
+    const symbol = "{{ symbol }}";
+    
+    // Перше оновлення
+    fetchOrderBook(symbol).then(orderBook => {
+        if (orderBook) {
+            updateOrderBook(orderBook);
+        }
+    });
+    
+    // Оновлення кожні 2 секунди
+    setInterval(() => {
+        fetchOrderBook(symbol).then(orderBook => {
+            if (orderBook) {
+                updateOrderBook(orderBook);
+            }
+        });
+    }, 2000);
 });
 </script>
 {% endblock %}

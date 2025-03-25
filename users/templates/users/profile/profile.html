@@ -11,92 +11,180 @@
 
 {% block content %}
 <div class="profile-container">
-
-    <h1 class="profile-title">Профіль              </h1>
+    <div class="profile-header">
+        <h1 class="profile-title">
+            <i class="bi bi-person-circle"></i>
+            Профіль
+        </h1>
+    </div>
 
     <div class="profile-overview">
-        <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-        <div class="profile-picture-section">
-            <img src="{{ user.profile.profile_picture }}" alt="Фото профілю" class="profile-picture">
-            <button id="change-picture-btn1" class="btn-photo-change">
-                <i class="bi bi-pencil-square"></i>
-            </button>
-            <button id="change-picture-btn" class="btn btn-secondary">Змінити фото</button>
-        </div>
-        <hr>
-        {% if is_2fa_authenticated %}
-            <div class="verified">
-                <i class="bi bi-person-check-fill" style="font-size: 1.5rem;"></i>
-                <p class="success-message">Ви успішно налаштували двофакторну автентифікацію.</p>
+        <div class="profile-main-info">
+            <div class="profile-picture-section">
+                <div class="profile-picture-wrapper">
+                    <img src="{{ user.profile.profile_picture }}" alt="Фото профілю" class="profile-picture">
+                    <span class="online-status" title="Онлайн"></span>
+                </div>
+                <div class="profile-actions">
+                    <button id="change-picture-btn1" class="btn-photo-change">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button id="change-picture-btn" class="btn btn-secondary">
+                        <i class="bi bi-camera"></i> Змінити фото
+                    </button>
+                </div>
             </div>
-        {% else %}
-            <div class="two-factor-auth">
-                <div class="fa-warning">
-                    <i class="bi bi-exclamation-circle" style="font-size: 3.5rem;"></i>
-                    <div>
-                        <p class="warning-message">Рекомендуємо увімкнути двофакторну автентифікацію для додаткового захисту.</p>
-                        <a href="{% url 'two_factor_setup' %}" class="btn btn-primary">Налаштувати 2FA</a>
+            <div class="user-details">
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <div class="user-id-section">
+                    <span class="user-id">ID: {{ user.profile.custom_id }}</span>
+                    <button class="copy-btn" onclick="copyToClipboard('{{ user.profile.custom_id }}')" title="Копіювати ID">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                </div>
+                <div class="account-stats">
+                    <div class="stat-item">
+                        <i class="bi bi-calendar3"></i>
+                        <span>На платформі з {{ user.date_joined|date:"d.m.Y" }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Останній вхід: {{ user.last_login|date:"d.m.Y H:i" }}</span>
                     </div>
                 </div>
             </div>
-        {% endif %}
+        </div>
+
+        <div class="security-section">
+            {% if is_2fa_authenticated %}
+                <div class="verified">
+                    <i class="bi bi-shield-check" style="font-size: 1.5rem;"></i>
+                    <div class="security-info">
+                        <h4>Двофакторна автентифікація активна</h4>
+                        <p class="success-message">Ваш акаунт надійно захищений</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="two-factor-auth">
+                    <div class="fa-warning">
+                        <i class="bi bi-shield-exclamation" style="font-size: 2rem;"></i>
+                        <div class="security-info">
+                            <h4>Підвищіть безпеку акаунту</h4>
+                            <p class="warning-message">Рекомендуємо увімкнути двофакторну автентифікацію</p>
+                            <a href="{% url 'two_factor_setup' %}" class="btn btn-primary">
+                                <i class="bi bi-shield-plus"></i> Налаштувати 2FA
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
-    <br>
-    <h1 class="profile-title">Інформація                                         </h1>
-    <div class="profile-overview">
-        <div class="profile-info-item">
-            <p class="info-name">ID Користувача:</p>
-            <p class="info-data">{{ user.profile.custom_id }}</p>
-        </div>
-        <div class="profile-info-item">
-            <p class="info-name">Логін:</p>
-            <p class="info-data">{{ user.username }}</p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Ім'я:</p>
-            <p class="info-data">{{ user.first_name }}</p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Прізвище:</p>
-            <p class="info-data">{{ user.last_name }}</p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Електронна адреса:</p>
-            <p class="info-data">{{ user.email }}</p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Номер телефону:</p>
-            {% if user.profile.phone_number %}
-                <p class="info-data">{{ user.profile.phone_number }}</p>
-            {% else %}
-                <p class="info-data"><button class="set-data-btn" id="set-phone-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
-            {% endif %}
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Країна/Регіон:</p>
-            {% if user.profile.country %}
-                <p class="info-data">{{ user.profile.country }}</p>
-            {% else %}
-                <p class="info-data"><button class="set-data-btn" id="set-country-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
-            {% endif %}
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Дата реєстрації:</p>
-            <p class="info-data">{{ user.date_joined }}</p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name">Дата останнього входу:</p>
-            <p class="info-data">{{ user.last_login }}</p>
+    <div class="profile-section">
+        <h2 class="profile-title">
+            <i class="bi bi-info-circle"></i>
+            Особиста інформація
+        </h2>
+        <div class="profile-overview">
+            <div class="profile-info-item" data-tooltip="Унікальний ідентифікатор користувача">
+                <p class="info-name">
+                    <i class="bi bi-fingerprint"></i>
+                    ID Користувача:
+                </p>
+                <div class="info-data-group">
+                    <p class="info-data">{{ user.profile.custom_id }}</p>
+                    
+                </div>
+            </div>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-person-badge"></i>
+                    Логін:
+                </p>
+                <p class="info-data">{{ user.username }}</p>
+            </div>
+            <hr>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-person"></i>
+                    Ім'я:
+                </p>
+                <p class="info-data">{{ user.first_name }}</p>
+            </div>
+            <hr>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-person-vcard"></i>
+                    Прізвище:
+                </p>
+                <p class="info-data">{{ user.last_name }}</p>
+            </div>
+            <hr>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-envelope"></i>
+                    Електронна адреса:
+                </p>
+                <p class="info-data">{{ user.email }}</p>
+            </div>
+            <hr>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-telephone"></i>
+                    Номер телефону:
+                </p>
+                {% if user.profile.phone_number %}
+                    <p class="info-data">{{ user.profile.phone_number }}</p>
+                {% else %}
+                    <p class="info-data"><button class="set-data-btn" id="set-phone-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
+                {% endif %}
+            </div>
+            <hr>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-globe"></i>
+                    Країна/Регіон:
+                </p>
+                {% if user.profile.country %}
+                    <p class="info-data">{{ user.profile.country }}</p>
+                {% else %}
+                    <p class="info-data"><button class="set-data-btn" id="set-country-btn">Налаштувати <i class="bi bi-caret-right-fill"></i></button></p>
+                {% endif %}
+            </div>
         </div>
     </div>
+
+    <div class="profile-section">
+        <h2 class="profile-title danger-title">
+            <i class="bi bi-exclamation-triangle"></i>
+            Небезпечна зона
+        </h2>
+        <div class="profile-overview danger-zone">
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Вихід з акаунту
+                </p>
+                <button class="btn btn-danger" onclick="confirmLogout()">
+                    <i class="bi bi-door-open"></i>
+                    Вийти
+                </button>
+            </div>
+            <div class="profile-info-item">
+                <p class="info-name">
+                    <i class="bi bi-exclamation-octagon"></i>
+                    Видалення акаунту
+                </p>
+                <button class="btn btn-danger-outline" onclick="confirmDeleteAccount()">
+                    <i class="bi bi-trash"></i>
+                    Видалити акаунт
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="phone-modal" class="modal">
   <div class="modal-content">
     <span class="close-btn">&times;</span>
@@ -123,37 +211,19 @@
   </div>
 </div>
 
-    <br>
-    <h1 class="profile-title">Небезпечна зона</h1>
-    <div class="profile-overview">
-        <div class="profile-info-item">
-            <p class="info-name" style="color:#f1493f"><i class="bi bi-box-arrow-right"style="font-size: 1.3rem;"></i>     Вихід з акаунту</p>
-            <p class="info-data"><button id="logout-account" class="account-btn"><a href="{% url 'logout' %}"><i class="bi bi-caret-right-fill"></i></a></button></p>
-        </div>
-        <hr>
-        <div class="profile-info-item">
-            <p class="info-name" style="color:#f1493f"><i class="bi bi-x-octagon" style="font-size: 1.3rem;"></i>     Закрити акаунт</p>
-            <p class="info-data">
-                <button id="close-account" class="account-btn">
-                    <i class="bi bi-caret-right-fill"></i>
-                </button>
-            </p>
-        </div>
-    </div>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h3>Оновити фото профілю</h3>
-            <form id="upload-form" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <button type="button" id="select-file-btn" class="btn btn-secondary">Вибрати файл</button>
-                <div id="drop-zone">
-                    <p>Перетягніть файл сюди або натисніть, щоб вибрати. (до 32 мб)</p>
-                    <input type="file" name="profile_picture" id="file-input" accept="image/*" hidden>
-                </div>
-                <button type="submit" id="update-btn" class="btn btn-primary" disabled>Встановити фото профілю</button>
-            </form>
-        </div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Оновити фото профілю</h3>
+        <form id="upload-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="button" id="select-file-btn" class="btn btn-secondary">Вибрати файл</button>
+            <div id="drop-zone">
+                <p>Перетягніть файл сюди або натисніть, щоб вибрати. (до 32 мб)</p>
+                <input type="file" name="profile_picture" id="file-input" accept="image/*" hidden>
+            </div>
+            <button type="submit" id="update-btn" class="btn btn-primary" disabled>Встановити фото профілю</button>
+        </form>
     </div>
 </div>
 
@@ -221,25 +291,6 @@
         e.preventDefault();
         checkFileSelection();
     });
-    document.getElementById("close-account").addEventListener("click", function() {
-    console.log('close')
-    if (confirm("Ви впевнені, що хочете видалити акаунт? Цю дію не можна скасувати!")) {
-        fetch("{% url 'delete_account' %}", {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-                "Content-Type": "application/json"
-            },
-            credentials: "same-origin"
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert(data.message);
-            window.location.href = "/"; // Перенаправлення на головну
-        })
-        .catch(error => console.error("Помилка:", error));
-    }
-});
 
     try{
     // Відкриття модалей
@@ -322,5 +373,111 @@
     this.value = this.value.replace(/\D/g, ""); // Видаляє всі нецифрові символи
 });
 
+function copyToClipboard(text) {
+    const copyBtn = event.currentTarget;
+    const icon = copyBtn.querySelector('i');
+    
+    navigator.clipboard.writeText(text).then(() => {
+        // Change icon to checkmark
+        icon.classList.remove('bi-clipboard');
+        icon.classList.add('bi-check-circle-fill');
+        icon.style.color = '#00ff88';
+
+        // Create and show notification
+        const notification = document.createElement('div');
+        notification.className = 'copy-notification';
+        notification.innerHTML = '<i class="bi bi-check-circle"></i> Скопійовано!';
+        document.body.appendChild(notification);
+
+        // Reset icon after 2 seconds
+        setTimeout(() => {
+            icon.classList.remove('bi-check-circle-fill');
+            icon.classList.add('bi-clipboard');
+            icon.style.color = '';
+        }, 2000);
+
+        // Remove notification after animation
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    });
+}
+
+function confirmLogout() {
+    if (confirm('Ви впевнені, що хочете вийти з акаунту?')) {
+        window.location.href = "{% url 'logout' %}";
+    }
+}
+
+function confirmDeleteAccount() {
+    if (confirm('Ви впевнені, що хочете видалити акаунт? Цю дію неможливо скасувати!')) {
+        fetch("{% url 'delete_account' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin"
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.href = "/";
+        })
+        .catch(error => console.error("Помилка:", error));
+    }
+}
+
+// Додавання 4 годин до дат
+document.addEventListener('DOMContentLoaded', function() {
+    const dates = document.querySelectorAll('.stat-item span');
+    dates.forEach(dateSpan => {
+        const text = dateSpan.textContent;
+        if (!text) return; // Пропускаємо якщо текст пустий
+
+        if (text.includes('На платформі з') || text.includes('Останній вхід:')) {
+            const parts = text.split(': ');
+            if (parts.length < 2) return; // Пропускаємо якщо немає дати
+            
+            const dateStr = parts[1];
+            console.log('Original date string:', dateStr);
+            
+            try {
+                // Парсимо дату з українського формату
+                const [day, month, year, hours, minutes] = dateStr.split(/[.: ]/).filter(Boolean);
+                const originalDate = new Date(year, month - 1, day, hours || 0, minutes || 0);
+                
+                // Перевіряємо чи дата валідна
+                if (isNaN(originalDate.getTime())) {
+                    console.error('Invalid date:', dateStr);
+                    return;
+                }
+                
+                // Додаємо 4 години
+                originalDate.setHours(originalDate.getHours() + 2);
+                
+                // Форматуємо дату назад в український формат
+                const formattedDate = originalDate.toLocaleString('uk-UA', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: hours ? '2-digit' : undefined,
+                    minute: minutes ? '2-digit' : undefined
+                });
+                
+                if (text.includes('На платформі з')) {
+                    dateSpan.textContent = `На платформі з ${formattedDate.split(',')[0]}`;
+                } else {
+                    dateSpan.textContent = `Останній вхід: ${formattedDate}`;
+                }
+            } catch (error) {
+                console.error('Error processing date:', error);
+            }
+        }
+    });
+});
+
 </script>
+
+
 {% endblock %}

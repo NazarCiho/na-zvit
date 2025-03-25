@@ -1,96 +1,287 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load trade_filters %}
+
 {% block title %}
-    Ваші Гаманці
+    Ваш Гаманець | BitSim
 {% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'trade/styles/wallet.css' %}">
+    <script src="{% static 'trade/js/wallet.js' %}"></script>
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-{% endblock %}
+{% endblock %} 
 
 {% block content %}
 <div class="wallet-page-container">
-    <h1 class="page-title">Ваші Гаманці</h1>
-
+    <!-- User Profile Section -->
     <div class="user-card">
         <div class="user-info">
             <img src="{{ request.user.profile.profile_picture }}" alt="Фото профілю" class="profile-picture">
             <div class="user-details">
                 <div class="user-flex-det">
-                    <p><strong>Email:</strong> {{ request.user.email }}</p>
-                    <p class="uid"><strong>UID:</strong> {{ request.user.profile.custom_id }}</p>
+                    <h2>{{ request.user.get_full_name }}</h2>
+                    <p class="uid">ID: {{ request.user.profile.custom_id }}</p>
                 </div>
-                <button class="button-2fa">
-                    {% if request.user.profile.is_2fa_authenticated %}
-                        <span class="status-success">
-                            <i class="fas fa-check-circle"></i> Підтверджено
-                        </span>
-                    {% else %}
-                        <span class="status-failed">
-                            <i class="fas fa-times-circle"></i> Не підтверджено
-                        </span>
-                    {% endif %}
+                <div class="security-status">
+                    <div class="status-item {% if request.user.profile.is_2fa_authenticated %}active{% endif %}">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>2FA {% if request.user.profile.is_2fa_authenticated %}Активовано{% else %}Неактивно{% endif %}</span>
+                    </div>
+                    <div class="status-item active">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email Підтверджено</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Balance Overview -->
+    <div class="balance-overview">
+        <div class="total-balance">
+            <div class="balance-header">
+                <h3>Загальний баланс</h3>
+                <button class="toggle-balance" title="Показати/приховати баланс">
+                    <i class="fas hide-ico fa-eye"></i>
                 </button>
             </div>
-        </div>
-    </div>
-
-    <div class="wallets-section">
-        <h2 class="section-title">Баланс</h2>
-        <div class="wallets-list">
-            {% for wallet in wallets %}
-            <div class="wallet-item">
-                <div class="wallet-header">
-                    <h3>{{ wallet.name }}</h3>
-                    <p class="balance">Баланс: ${{ wallet.balance_usd|floatformat:2 }}</p>
-                </div>
-                <h4>Криптовалюти:</h4>
-                <ul class="crypto-balances">
-                    {% for currency, amount in wallet.crypto_balances.items %}
-                    <li class="crypto-item">
-                        <span class="currency">{{ currency }}</span>
-                        <span class="amount">{{ amount|floatformat:8 }}</span>
-                    </li>
-                    {% endfor %}
-                </ul>
+            <div class="balance-amount">
+                <span class="amount balance-value">{% calculate_total_balance wallet.crypto_balances prices wallet.balance_usd %}</span>
+                <span class="currency">$</span>
+                <span class="amount balance-hidden" style="display: none;">⋆⋆⋆⋆⋆⋆⋆⋆</span>
             </div>
-            {% empty %}
-            <p>У вас немає гаманців.</p>
-            {% endfor %}
+            <div class="btc-equivalent">
+                ≈ <span class="btc-value balance-value">{% calculate_total_btc wallet.crypto_balances prices wallet.balance_usd %}</span>
+                <span class="balance-hidden" style="display: none;">⋆⋆⋆⋆⋆⋆⋆</span> BTC
+            </div>
+        </div>
+        <div class="balance-actions">
+            <button class="action-btn deposit">
+                <i class="fas fa-arrow-down"></i>Поповнити
+            </button>
+            <button class="action-btn withdraw">
+                <i class="fas fa-arrow-up"></i>Вивести
+            </button>
+            <button class="action-btn transfer">
+                <i class="fas fa-exchange-alt"></i>Перевести
+            </button>
         </div>
     </div>
 
-    <div class="transactions-section">
-        <h2 class="section-title">Історія Транзакцій</h2>
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Дата</th>
-                    <th>Тип</th>
-                    <th>Криптовалюта</th>
-                    <th>Сума</th>
-                    <th>Ціна</th>
-                    <th>Статус</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.timestamp|date:"Y-m-d H:i" }}</td>
-                    <td>{{ transaction.transaction_type }}</td>
-                    <td>{{ transaction.currency }}</td>
-                    <td>{{ transaction.amount|floatformat:8 }}</td>
-                    <td>${{ transaction.price_usd|floatformat:2 }}</td>
-                    <td class="status-{{ transaction.status|lower }}">{{ transaction.get_status_display }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6">У вас немає транзакцій.</td>
-                </tr>
+    <!-- Assets List -->
+    <div class="assets-section">
+        <div class="section-header">
+            <h2>Ваші Активи</h2>
+            <div class="search-filter">
+                <input type="text" id="assetSearch" placeholder="Пошук активу...">
+            </div>
+        </div>
+
+        <div class="assets-list">
+            {% if wallet.crypto_balances %}
+                {% for currency, amount in wallet.crypto_balances.items %}
+                <div class="asset-item">
+                    <div class="asset-number">{{ forloop.counter }}</div>
+                    <div class="asset-main-info">
+                        <img src="https://github.com/spothq/cryptocurrency-icons/blob/master/32/color/{{ currency|lower|slice:':3' }}.png?raw=true" alt="{{ currency }}">
+                        <div class="asset-details">
+                            <span class="asset-name">{{ currency }}</span>
+                            <span class="asset-balance">{{ amount|floatformat:8 }}</span>
+                        </div>
+                    </div>
+                    <div class="asset-value">
+                        ≈ $<span class="price-value" data-symbol="{{ currency }}USDT">{{ prices|get_item:currency|multiply:amount|floatformat:2 }}</span>
+                    </div>
+                    <button class="trade-btn" onclick="window.location.href='/trade/spot/{{ currency }}USDT'">
+                        Торгувати
+                    </button>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            {% endif %}
+
+            <!-- USDT Balance -->
+            <div class="asset-item">
+                <div class="asset-number">{{ wallet.crypto_balances|length|add:1 }}</div>
+                <div class="asset-main-info">
+                    <img src="https://github.com/spothq/cryptocurrency-icons/blob/master/32/color/usdt.png?raw=true" alt="usdt" alt="USDT">
+                    <div class="asset-details">
+                        <span class="asset-name">USDT</span>
+                        <span class="asset-balance">{{ wallet.balance_usd|floatformat:2 }}</span>
+                    </div>
+                </div>
+                <div class="asset-value">
+                    ≈ ${{ wallet.balance_usd|floatformat:2 }}
+                </div>
+                <button class="trade-btn">Поповнити</button>
+            </div>
+
+            {% if not wallet.crypto_balances and wallet.balance_usd == 0 %}
+            <div class="empty-state">
+                <i class="fas fa-wallet"></i>
+                <p>У вас поки немає активів</p>
+                <button class="deposit-btn">Поповнити баланс</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Transactions & Orders Tabs -->
+    <div class="history-section">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="transactions">
+                <i class="fas fa-history"></i>Історія транзакцій
+            </button>
+            <button class="tab-btn" data-tab="orders">
+                <i class="fas fa-file-alt"></i>Історія ордерів
+            </button>
+        </div>
+
+        <!-- Transactions Tab -->
+        <div class="tab-content active" id="transactions">
+            <div class="filters">
+                <select class="filter-select" id="type-filter">
+                    <option value="all">Всі типи</option>
+                    <option value="buy">Купівля</option>
+                    <option value="sell">Продаж</option>
+                </select>
+                <select class="filter-select" id="status-filter">
+                    <option value="all">Всі статуси</option>
+                    <option value="completed">Завершені</option>
+                    <option value="pending">В обробці</option>
+                    <option value="failed">Невдалі</option>
+                </select>
+                <div class="date-filter">
+                    <input type="date" class="date-input" id="date-from">
+                    <span>-</span>
+                    <input type="date" class="date-input" id="date-to">
+                </div>
+            </div>
+
+            <div class="transactions-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Тип</th>
+                            <th>Актив</th>
+                            <th>Сума</th>
+                            <th>Ціна</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.timestamp|date:"d.m.Y H:i" }}</td>
+                            <td class="type-cell">
+                                <span class="type-badge {{ transaction.transaction_type|lower }}">
+                                    {% if transaction.transaction_type == 'BUY' %}
+                                        Купівля
+                                    {% else %}
+                                        Продаж
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>{{ transaction.currency }}</td>
+                            <td class="amount-cell {% if transaction.transaction_type == 'BUY' %}positive{% else %}negative{% endif %}">
+                                {{ transaction.amount|floatformat:8 }}
+                            </td>
+                            <td>${{ transaction.price_usd|floatformat:2 }}</td>
+                            <td>
+                                <span class="status-badge {{ transaction.status|lower }}">
+                                    {{ transaction.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-table">
+                                <div class="empty-state">
+                                    <i class="fas fa-history"></i>
+                                    <p>Транзакції відсутні</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div class="tab-content" id="orders">
+            <div class="filters">
+                <select class="filter-select" id="order-type-filter">
+                    <option value="all">Всі типи</option>
+                    <option value="limit">Лімітний</option>
+                    <option value="market">Ринковий</option>
+                </select>
+                <select class="filter-select" id="order-status-filter">
+                    <option value="all">Всі статуси</option>
+                    <option value="open">Відкриті</option>
+                    <option value="filled">Виконані</option>
+                    <option value="cancelled">Скасовані</option>
+                </select>
+            </div>
+
+            <div class="orders-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Пара</th>
+                            <th>Тип</th>
+                            <th>Ціна</th>
+                            <th>Кількість</th>
+                            <th>Статус</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                            <td>{{ order.currency }}/USDT</td>
+                            <td>
+                                <span class="order-type-badge {{ order.order_type|lower }}">
+                                    {{ order.get_order_type_display }}
+                                </span>
+                            </td>
+                            <td>${{ order.limit_price|floatformat:2 }}</td>
+                            <td>{{ order.amount|floatformat:8 }}</td>
+                            <td>
+                                <span class="status-badge {{ order.status|lower }}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if order.status == 'OPEN' %}
+                                <button class="cancel-btn" data-order-id="{{ order.id }}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-table">
+                                <div class="empty-state">
+                                    <i class="fas fa-file-alt"></i>
+                                    <p>Ордери відсутні</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
 {% endblock %}
+
+

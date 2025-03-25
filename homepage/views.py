@@ -5,14 +5,12 @@ from users.models import UserProfile
 
 def home(request):
     if request.user.is_authenticated:
-        # Отримуємо профіль користувача
         try:
             user_profile = UserProfile.objects.get(user=request.user)
             is_2fa_authenticated = user_profile.is_2fa_authenticated
         except UserProfile.DoesNotExist:
             is_2fa_authenticated = False
     else:
-        # Для анонімного користувача
         is_2fa_authenticated = False
 
     return render(request, "homepage/index.html", {
